@@ -65,6 +65,6 @@ module "cicd" {
   privileged_mode    = true
   aws_region         = "${var.region}"
   aws_account_id     = "${var.aws_account_id}"
-  image_repo_name    = "${var.image_repo_name}"
+  image_repo_name    = "${module.ecr.repository_name}"
   image_tag          = "${var.image_tag}"
 }
