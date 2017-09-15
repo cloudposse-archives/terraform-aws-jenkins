@@ -77,7 +77,7 @@ variable "autoscale_min" {
 }
 
 variable "autoscale_max" {
-  default = "1"
+  default = "2"
 }
 
 variable "security_groups" {
