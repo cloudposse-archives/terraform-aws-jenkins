@@ -1,7 +1,3 @@
-terraform {
-  required_version = ">= 0.10.2"
-}
-
 # Elastic Beanstalk Application
 module "eb_application" {
   source      = "git::https://github.com/cloudposse/tf_eb_application.git?ref=tags/0.1.1"
