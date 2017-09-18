@@ -42,7 +42,7 @@ variable "zone_id" {
 }
 
 variable "updating_min_in_service" {
-  default = "1"
+  default = "0"
 }
 
 variable "updating_max_batch" {
@@ -77,7 +77,7 @@ variable "autoscale_min" {
 }
 
 variable "autoscale_max" {
-  default = "2"
+  default = "1"
 }
 
 variable "security_groups" {
