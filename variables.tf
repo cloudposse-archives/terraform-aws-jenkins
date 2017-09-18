@@ -92,20 +92,23 @@ variable "keypair" {
 
 # CI/CD - CodePipeline/CodeBuild
 variable "github_oauth_token" {
-  type = "string"
+  type    = "string"
   default = ""
 }
 
 variable "github_organization" {
-  type = "string"
+  type    = "string"
+  default = "cloudposse"
 }
 
 variable "github_repo_name" {
-  type = "string"
+  type    = "string"
+  default = "jenkins"
 }
 
 variable "github_branch" {
-  type = "string"
+  type    = "string"
+  default = "master"
 }
 
 # http://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html#build-env-ref-available
@@ -128,4 +131,5 @@ variable "aws_account_id" {
 variable "image_tag" {
   type        = "string"
   description = "Docker image tag in the ECR repository, e.g. 'latest'. Used as CodeBuild ENV variable when building Docker images. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker.html"
+  default     = "latest"
 }
