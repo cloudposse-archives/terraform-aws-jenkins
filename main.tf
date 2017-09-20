@@ -31,7 +31,7 @@ module "eb_environment" {
   security_groups         = ["${var.security_groups}"]
   keypair                 = "${var.keypair}"
   solution_stack_name     = "${var.solution_stack_name}"
-  env                     = "${var.env}"
+  #env                     = "${var.env}"
 }
 
 # Elastic Container Registry Docker Repository
