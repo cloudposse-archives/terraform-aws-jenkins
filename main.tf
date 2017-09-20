@@ -9,7 +9,7 @@ module "eb_application" {
 
 # Elastic Beanstalk Environment
 module "eb_environment" {
-  source                  = "git::https://github.com/cloudposse/tf_eb_environment.git?ref=add-env-vars"
+  source                  = "git::https://github.com/cloudposse/tf_eb_environment.git?ref=tags/0.2.0"
   attributes              = ["eb"]
   namespace               = "${var.namespace}"
   name                    = "${var.name}"
