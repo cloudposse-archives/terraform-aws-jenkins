@@ -1,4 +1,4 @@
-variable "region" {
+variable "aws_region" {
   type    = "string"
   default = "us-west-2"
 }
@@ -27,6 +27,10 @@ variable "solution_stack_name" {
 
 variable "vpc_id" {
   type = "string"
+}
+
+variable "availability_zones" {
+  type = "list"
 }
 
 variable "public_subnets" {

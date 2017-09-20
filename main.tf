@@ -45,6 +45,21 @@ module "ecr" {
   stage      = "${var.stage}"
 }
 
+# EFS to store Jenkins state (settings, jobs, etc.)
+module "efs" {
+  source             = "git::https://github.com/cloudposse/tf_efs.git?ref=tags/0.2.0"
+  attributes         = "efs"
+  namespace          = "${var.namespace}"
+  name               = "${var.name}"
+  stage              = "${var.stage}"
+  aws_region         = "${var.aws_region}"
+  vpc_id             = "${var.vpc_id}"
+  subnets            = "${var.private_subnets}"
+  availability_zones = "${var.availability_zones}"
+  security_groups    = ["${module.eb_environment.security_group_id}"]          # EB/EC2 instances are allowed to connect to the EFS
+  zone_id            = "${var.zone_id}"
+}
+
 # CodePipeline/CodeBuild
 module "cicd" {
   source             = "git::https://github.com/cloudposse/tf_cicd.git?ref=tags/0.4.0"
@@ -62,7 +77,7 @@ module "cicd" {
   build_image        = "${var.build_image}"
   build_compute_type = "${var.build_compute_type}"
   privileged_mode    = true
-  aws_region         = "${var.region}"
+  aws_region         = "${var.aws_region}"
   aws_account_id     = "${var.aws_account_id}"
   image_repo_name    = "${module.ecr.repository_name}"
   image_tag          = "${var.image_tag}"
