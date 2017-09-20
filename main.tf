@@ -1,3 +1,22 @@
+# Merge the provided ENV vars with EFS_HOST (created EFS DNS hostname)
+resource "null_resource" "env_vars" {
+  triggers = {
+    value = "${
+    merge(
+      map(
+        "EFS_HOST", "${module.efs.host}"
+      ), var.env_vars
+    )
+  }"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  depends_on = ["module.efs"]
+}
+
 # Elastic Beanstalk Application
 module "eb_application" {
   source      = "git::https://github.com/cloudposse/tf_eb_application.git?ref=tags/0.1.1"
@@ -28,12 +47,12 @@ module "eb_environment" {
   vpc_id                  = "${var.vpc_id}"
   public_subnets          = "${var.public_subnets}"
   private_subnets         = "${var.private_subnets}"
-  security_groups         = ["${var.security_groups}"]
+  security_groups         = "${var.security_groups}"
   keypair                 = "${var.keypair}"
   solution_stack_name     = "${var.solution_stack_name}"
   env_default_key         = "${var.env_default_key}"
   env_default_value       = "${var.env_default_value}"
-  env_vars                = "${var.env_vars}"
+  env_vars                = "${null_resource.env_vars.triggers.value}"
 }
 
 # Elastic Container Registry Docker Repository
@@ -56,7 +75,7 @@ module "efs" {
   vpc_id             = "${var.vpc_id}"
   subnets            = "${var.private_subnets}"
   availability_zones = "${var.availability_zones}"
-  security_groups    = ["${module.eb_environment.security_group_id}"]          # EB/EC2 instances are allowed to connect to the EFS
+  security_groups    = ["${module.eb_environment.security_group_id}"]                 # EB/EC2 instances are allowed to connect to the EFS
   zone_id            = "${var.zone_id}"
 }
 
