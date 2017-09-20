@@ -33,7 +33,7 @@ module "eb_environment" {
   solution_stack_name     = "${var.solution_stack_name}"
   env_default_key         = "${var.env_default_key}"
   env_default_value       = "${var.env_default_value}"
-  env_map                 = "${var.env_map}"
+  env_vars                = "${var.env_vars}"
 }
 
 # Elastic Container Registry Docker Repository
