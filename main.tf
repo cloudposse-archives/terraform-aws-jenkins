@@ -9,7 +9,7 @@ module "eb_application" {
 
 # Elastic Beanstalk Environment
 module "eb_environment" {
-  source                  = "git::https://github.com/cloudposse/tf_eb_environment.git?ref=tags/0.2.0"
+  source                  = "git::https://github.com/cloudposse/tf_eb_environment.git?ref=tags/0.3.0"
   attributes              = ["eb"]
   namespace               = "${var.namespace}"
   name                    = "${var.name}"
@@ -31,7 +31,9 @@ module "eb_environment" {
   security_groups         = ["${var.security_groups}"]
   keypair                 = "${var.keypair}"
   solution_stack_name     = "${var.solution_stack_name}"
-  #env                     = "${var.env}"
+  env_default_key         = "${var.env_default_key}"
+  env_default_value       = "${var.env_default_value}"
+  env_map                 = "${var.env_map}"
 }
 
 # Elastic Container Registry Docker Repository
