@@ -39,7 +39,7 @@ module "eb_environment" {
   autoscale_upper_bound   = "${var.autoscale_upper_bound}"
   autoscale_min           = "${var.autoscale_min}"
   autoscale_max           = "${var.autoscale_max}"
-  instance_type           = "${var.eb_instance_type}"
+  instance_type           = "${var.master_instance_type}"
   updating_min_in_service = "${var.updating_min_in_service}"
   updating_max_batch      = "${var.updating_max_batch}"
   healthcheck_url         = "${var.healthcheck_url}"

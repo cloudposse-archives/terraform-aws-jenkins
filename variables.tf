@@ -71,7 +71,7 @@ variable "loadbalancer_type" {
   default = "application"
 }
 
-variable "eb_instance_type" {
+variable "master_instance_type" {
   type    = "string"
   default = "t2.medium"
 }
