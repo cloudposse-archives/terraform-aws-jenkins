@@ -1,6 +1,6 @@
 # Merge the provided ENV vars with EFS_HOST (created EFS DNS hostname)
 resource "null_resource" "env_vars" {
-  triggers = {
+  triggers   = {
     value = "${
     merge(
       map(
@@ -36,10 +36,18 @@ module "elastic_beanstalk_environment" {
   zone_id                 = "${var.zone_id}"
   app                     = "${module.elastic_beanstalk_application.app_name}"
   instance_type           = "${var.master_instance_type}"
+
+  # Set `min` nad `max` number of running EC2 instances to `1` since we want only one Jenkins master running at any time
   autoscale_min           = 1
   autoscale_max           = 1
+
+  # Since we set `autoscale_min = autoscale_max`, we need to set `updating_min_in_service` to 0 for the AutoScaling Group to work.
+  # Elastic Beanstalk will kill the master instance and replace it with a new one in case of any issues with it.
+  # But it's OK since we store all Jenkins state (settings, jobs, etc.) on the EFS.
+  # If the instance gets replaced or rebooted, Jenkins will find all the data on EFS after restart.
   updating_min_in_service = 0
   updating_max_batch      = 1
+
   healthcheck_url         = "${var.healthcheck_url}"
   loadbalancer_type       = "${var.loadbalancer_type}"
   vpc_id                  = "${var.vpc_id}"
