@@ -18,7 +18,7 @@ resource "null_resource" "env_vars" {
 }
 
 # Elastic Beanstalk Application
-module "elastic-beanstalk-application" {
+module "elastic_beanstalk_application" {
   source      = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application.git?ref=tags/0.1.2"
   namespace   = "${var.namespace}"
   name        = "${var.name}"
@@ -27,14 +27,14 @@ module "elastic-beanstalk-application" {
 }
 
 # Elastic Beanstalk Environment
-module "elastic-beanstalk-environment" {
+module "elastic_beanstalk_environment" {
   source                  = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.2.1"
   attributes              = ["eb"]
   namespace               = "${var.namespace}"
   name                    = "${var.name}"
   stage                   = "${var.stage}"
   zone_id                 = "${var.zone_id}"
-  app                     = "${module.elastic-beanstalk-application.app_name}"
+  app                     = "${module.elastic_beanstalk_application.app_name}"
   instance_type           = "${var.master_instance_type}"
   autoscale_min           = 1
   autoscale_max           = 1
@@ -73,7 +73,7 @@ module "efs" {
   vpc_id             = "${var.vpc_id}"
   subnets            = "${var.private_subnets}"
   availability_zones = "${var.availability_zones}"
-  security_groups    = ["${module.elastic-beanstalk-environment.security_group_id}"]             # EB/EC2 instances are allowed to connect to the EFS
+  security_groups    = ["${module.elastic_beanstalk_environment.security_group_id}"]             # EB/EC2 instances are allowed to connect to the EFS
   zone_id            = "${var.zone_id}"
 }
 
@@ -84,8 +84,8 @@ module "cicd" {
   namespace          = "${var.namespace}"
   name               = "${var.name}"
   stage              = "${var.stage}"
-  app                = "${module.elastic-beanstalk-application.app_name}"
-  env                = "${module.elastic-beanstalk-environment.name}"
+  app                = "${module.elastic_beanstalk_application.app_name}"
+  env                = "${module.elastic_beanstalk_environment.name}"
   enabled            = "true"
   github_oauth_token = "${var.github_oauth_token}"
   repo_owner         = "${var.github_organization}"
