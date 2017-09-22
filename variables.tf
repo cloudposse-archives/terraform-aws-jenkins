@@ -138,17 +138,19 @@ variable "image_tag" {
 }
 
 variable "env_default_key" {
+  type        = "string"
   default     = "DEFAULT_ENV_%d"
   description = "Default ENV variable key for Elastic Beanstalk 'aws:elasticbeanstalk:application:environment` setting"
 }
 
 variable "env_default_value" {
+  type        = "string"
   default     = "UNSET"
   description = "Default ENV variable value for Elastic Beanstalk 'aws:elasticbeanstalk:application:environment` setting"
 }
 
 variable "env_vars" {
-  default     = {}
   type        = "map"
+  default     = {}
   description = "Map of custom ENV variables to be provided to the Jenkins application running on Elastic Beanstalk, e.g. env_vars = { JENKINS_USER = 'admin' JENKINS_PASS = 'xxxxxx' }"
 }
