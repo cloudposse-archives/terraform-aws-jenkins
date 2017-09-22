@@ -65,7 +65,7 @@ module "ecr" {
 # EFS to store Jenkins state (settings, jobs, etc.)
 module "efs" {
   source             = "git::https://github.com/cloudposse/tf_efs.git?ref=tags/0.2.0"
-  attributes         = "efs"
+  attributes         = ["efs"]
   namespace          = "${var.namespace}"
   name               = "${var.name}"
   stage              = "${var.stage}"
