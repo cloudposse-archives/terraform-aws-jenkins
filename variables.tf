@@ -29,7 +29,7 @@ variable "description" {
 # http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html#concepts.platforms.docker
 variable "solution_stack_name" {
   type        = "string"
-  default     = "64bit Amazon Linux 2017.03 v2.7.3 running Docker 17.03.1-ce"
+  default     = "64bit Amazon Linux 2017.03 v2.7.4 running Docker 17.03.2-ce"
   description = "Elastic Beanstalk stack, e.g. Docker, Go, Node, Java, IIS. For more info: http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html"
 }
 

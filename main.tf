@@ -1,22 +1,3 @@
-# Merge the provided ENV vars with EFS_HOST (created EFS DNS hostname)
-resource "null_resource" "env_vars" {
-  triggers   = {
-    value = "${
-    merge(
-      map(
-        "EFS_HOST", "${module.efs.host}"
-      ), var.env_vars
-    )
-  }"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  depends_on = ["module.efs"]
-}
-
 # Elastic Beanstalk Application
 module "elastic_beanstalk_application" {
   source      = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application.git?ref=tags/0.1.2"
@@ -28,37 +9,45 @@ module "elastic_beanstalk_application" {
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source                  = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.2.1"
-  attributes              = ["eb"]
-  namespace               = "${var.namespace}"
-  name                    = "${var.name}"
-  stage                   = "${var.stage}"
-  zone_id                 = "${var.zone_id}"
-  app                     = "${module.elastic_beanstalk_application.app_name}"
-  instance_type           = "${var.master_instance_type}"
+  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.2.3"
+  attributes    = ["eb"]
+  namespace     = "${var.namespace}"
+  name          = "${var.name}"
+  stage         = "${var.stage}"
+  zone_id       = "${var.zone_id}"
+  app           = "${module.elastic_beanstalk_application.app_name}"
+  instance_type = "${var.master_instance_type}"
 
   # Set `min` nad `max` number of running EC2 instances to `1` since we want only one Jenkins master running at any time
-  autoscale_min           = 1
-  autoscale_max           = 1
+  autoscale_min = 1
+  autoscale_max = 1
 
   # Since we set `autoscale_min = autoscale_max`, we need to set `updating_min_in_service` to 0 for the AutoScaling Group to work.
-  # Elastic Beanstalk will kill the master instance and replace it with a new one in case of any issues with it.
+  # Elastic Beanstalk will terminate the master instance and replace it with a new one in case of any issues with it.
   # But it's OK since we store all Jenkins state (settings, jobs, etc.) on the EFS.
   # If the instance gets replaced or rebooted, Jenkins will find all the data on EFS after restart.
   updating_min_in_service = 0
-  updating_max_batch      = 1
 
-  healthcheck_url         = "${var.healthcheck_url}"
-  loadbalancer_type       = "${var.loadbalancer_type}"
-  vpc_id                  = "${var.vpc_id}"
-  public_subnets          = "${var.public_subnets}"
-  private_subnets         = "${var.private_subnets}"
-  security_groups         = "${var.security_groups}"
-  keypair                 = "${var.keypair}"
-  solution_stack_name     = "${var.solution_stack_name}"
-  env_default_key         = "${var.env_default_key}"
-  env_default_value       = "${var.env_default_value}"
-  env_vars                = "${null_resource.env_vars.triggers.value}"
+  updating_max_batch = 1
+
+  healthcheck_url     = "${var.healthcheck_url}"
+  loadbalancer_type   = "${var.loadbalancer_type}"
+  vpc_id              = "${var.vpc_id}"
+  public_subnets      = "${var.public_subnets}"
+  private_subnets     = "${var.private_subnets}"
+  security_groups     = "${var.security_groups}"
+  keypair             = "${var.keypair}"
+  solution_stack_name = "${var.solution_stack_name}"
+  env_default_key     = "${var.env_default_key}"
+  env_default_value   = "${var.env_default_value}"
+
+  env_vars = "${
+      merge(
+        map(
+          "EFS_HOST", "${module.efs.dns_name}"
+        ), var.env_vars
+      )
+    }"
 }
 
 # Elastic Container Registry Docker Repository
@@ -72,7 +61,7 @@ module "ecr" {
 
 # EFS to store Jenkins state (settings, jobs, etc.)
 module "efs" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.2.1"
+  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.3.0"
   attributes         = ["efs"]
   namespace          = "${var.namespace}"
   name               = "${var.name}"
