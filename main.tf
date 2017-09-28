@@ -61,7 +61,7 @@ module "ecr" {
 
 # EFS to store Jenkins state (settings, jobs, etc.)
 module "efs" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.3.0"
+  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.3.1"
   attributes         = ["efs"]
   namespace          = "${var.namespace}"
   name               = "${var.name}"
@@ -70,13 +70,30 @@ module "efs" {
   vpc_id             = "${var.vpc_id}"
   subnets            = "${var.private_subnets}"
   availability_zones = "${var.availability_zones}"
-  security_groups    = ["${module.elastic_beanstalk_environment.security_group_id}"]             # EB/EC2 instances are allowed to connect to the EFS
   zone_id            = "${var.zone_id}"
+
+  # EB/EC2 instances and DataPipeline instances are allowed to connect to the EFS
+  security_groups = ["${module.elastic_beanstalk_environment.security_group_id}", "${module.efs_backup.security_group_id}"]
+}
+
+# EFS backup to S3
+module "efs_backup" {
+  source                             = "git::https://github.com/cloudposse/terraform-aws-efs-backup.git?ref=tags/0.3.2"
+  name                               = "${var.name}"
+  stage                              = "${var.stage}"
+  namespace                          = "${var.namespace}"
+  region                             = "${var.aws_region}"
+  vpc_id                             = "${var.vpc_id}"
+  efs_mount_target_id                = "${element(module.efs.mount_target_ids, 0)}"
+  use_ip_address                     = "true"
+  noncurrent_version_expiration_days = "${var.noncurrent_version_expiration_days}"
+  ssh_key_pair                       = "${var.keypair}"
+  modify_security_group              = "false"
 }
 
 # CodePipeline/CodeBuild
 module "cicd" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.4.1"
+  source             = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.4.4"
   attributes         = ["cicd"]
   namespace          = "${var.namespace}"
   name               = "${var.name}"

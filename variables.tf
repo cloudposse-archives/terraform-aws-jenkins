@@ -154,3 +154,8 @@ variable "env_vars" {
   default     = {}
   description = "Map of custom ENV variables to be provided to the Jenkins application running on Elastic Beanstalk, e.g. env_vars = { JENKINS_USER = 'admin' JENKINS_PASS = 'xxxxxx' }"
 }
+
+variable "noncurrent_version_expiration_days" {
+  default     = 35
+  description = "Backup S3 bucket noncurrent version expiration days"
+}
