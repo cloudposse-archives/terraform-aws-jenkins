@@ -6,7 +6,7 @@ module "elastic_beanstalk_application" {
   stage       = "${var.stage}"
   description = "${var.description}"
   delimiter   = "${var.delimiter}"
-  attributes  = ["${compact(concat(var.attributes, list("app")))}"]
+  attributes  = ["${compact(concat(var.attributes, list("eb-app")))}"]
   tags        = "${var.tags}"
 }
 
@@ -52,7 +52,7 @@ module "elastic_beanstalk_environment" {
     }"
 
   delimiter  = "${var.delimiter}"
-  attributes = ["${compact(concat(var.attributes, list("env")))}"]
+  attributes = ["${compact(concat(var.attributes, list("eb-env")))}"]
   tags       = "${var.tags}"
 }
 
