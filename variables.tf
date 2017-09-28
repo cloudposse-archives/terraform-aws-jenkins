@@ -51,7 +51,7 @@ variable "availability_zones" {
 
 variable "healthcheck_url" {
   type        = "string"
-  default     = "/"
+  default     = "/login"
   description = "Application Health Check URL. Elastic Beanstalk will call this URL to check the health of the application running on EC2 instances"
 }
 
