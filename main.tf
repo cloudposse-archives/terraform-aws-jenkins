@@ -6,7 +6,7 @@ module "elastic_beanstalk_application" {
   stage       = "${var.stage}"
   description = "${var.description}"
   delimiter   = "${var.delimiter}"
-  attributes  = "${compact(concat(var.attributes, list("app")))}"
+  attributes  = ["${compact(concat(var.attributes, list("app")))}"]
   tags        = "${var.tags}"
 }
 
@@ -52,7 +52,7 @@ module "elastic_beanstalk_environment" {
     }"
 
   delimiter  = "${var.delimiter}"
-  attributes = "${compact(concat(var.attributes, list("env")))}"
+  attributes = ["${compact(concat(var.attributes, list("env")))}"]
   tags       = "${var.tags}"
 }
 
@@ -63,7 +63,7 @@ module "ecr" {
   name       = "${var.name}"
   stage      = "${var.stage}"
   delimiter  = "${var.delimiter}"
-  attributes = "${compact(concat(var.attributes, list("ecr")))}"
+  attributes = ["${compact(concat(var.attributes, list("ecr")))}"]
   tags       = "${var.tags}"
 }
 
@@ -83,7 +83,7 @@ module "efs" {
   security_groups = ["${module.elastic_beanstalk_environment.security_group_id}", "${module.efs_backup.security_group_id}"]
 
   delimiter  = "${var.delimiter}"
-  attributes = "${compact(concat(var.attributes, list("efs")))}"
+  attributes = ["${compact(concat(var.attributes, list("efs")))}"]
   tags       = "${var.tags}"
 }
 
@@ -101,7 +101,7 @@ module "efs_backup" {
   ssh_key_pair                       = "${var.keypair}"
   modify_security_group              = "false"
   delimiter                          = "${var.delimiter}"
-  attributes                         = "${compact(concat(var.attributes, list("efs-backup")))}"
+  attributes                         = ["${compact(concat(var.attributes, list("efs-backup")))}"]
   tags                               = "${var.tags}"
 }
 
@@ -126,6 +126,6 @@ module "cicd" {
   image_repo_name    = "${module.ecr.repository_name}"
   image_tag          = "${var.image_tag}"
   delimiter          = "${var.delimiter}"
-  attributes         = "${compact(concat(var.attributes, list("cicd")))}"
+  attributes         = ["${compact(concat(var.attributes, list("cicd")))}"]
   tags               = "${var.tags}"
 }
