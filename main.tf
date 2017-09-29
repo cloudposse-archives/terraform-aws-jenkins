@@ -100,6 +100,7 @@ module "efs_backup" {
   noncurrent_version_expiration_days = "${var.noncurrent_version_expiration_days}"
   ssh_key_pair                       = "${var.keypair}"
   modify_security_group              = "false"
+  datapipeline_config                = "${var.datapipeline_config}"
   delimiter                          = "${var.delimiter}"
   attributes                         = ["${compact(concat(var.attributes, list("efs-backup")))}"]
   tags                               = "${var.tags}"

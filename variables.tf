@@ -178,3 +178,15 @@ variable "tags" {
   default     = {}
   description = "Additional tags (e.g. `map('BusinessUnit`,`XYZ`)"
 }
+
+variable "datapipeline_config" {
+  type        = "map"
+  description = "DataPipeline configuration options"
+
+  default = {
+    instance_type = "t2.micro"
+    email         = ""
+    period        = "24 hours"
+    timeout       = "60 Minutes"
+  }
+}
