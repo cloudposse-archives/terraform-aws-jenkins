@@ -1,16 +1,18 @@
 # Elastic Beanstalk Application
 module "elastic_beanstalk_application" {
-  source      = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application.git?ref=tags/0.1.2"
+  source      = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application.git?ref=tags/0.1.3"
   namespace   = "${var.namespace}"
   name        = "${var.name}"
   stage       = "${var.stage}"
   description = "${var.description}"
+  delimiter   = "${var.delimiter}"
+  attributes  = ["${compact(concat(var.attributes, list("eb-app")))}"]
+  tags        = "${var.tags}"
 }
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.2.3"
-  attributes    = ["eb"]
+  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.2.4"
   namespace     = "${var.namespace}"
   name          = "${var.name}"
   stage         = "${var.stage}"
@@ -48,21 +50,26 @@ module "elastic_beanstalk_environment" {
         ), var.env_vars
       )
     }"
+
+  delimiter  = "${var.delimiter}"
+  attributes = ["${compact(concat(var.attributes, list("eb-env")))}"]
+  tags       = "${var.tags}"
 }
 
 # Elastic Container Registry Docker Repository
 module "ecr" {
   source     = "git::https://github.com/cloudposse/terraform-aws-ecr.git?ref=tags/0.2.1"
-  attributes = ["ecr"]
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
+  delimiter  = "${var.delimiter}"
+  attributes = ["${compact(concat(var.attributes, list("ecr")))}"]
+  tags       = "${var.tags}"
 }
 
 # EFS to store Jenkins state (settings, jobs, etc.)
 module "efs" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.3.0"
-  attributes         = ["efs"]
+  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.3.1"
   namespace          = "${var.namespace}"
   name               = "${var.name}"
   stage              = "${var.stage}"
@@ -70,14 +77,38 @@ module "efs" {
   vpc_id             = "${var.vpc_id}"
   subnets            = "${var.private_subnets}"
   availability_zones = "${var.availability_zones}"
-  security_groups    = ["${module.elastic_beanstalk_environment.security_group_id}"]             # EB/EC2 instances are allowed to connect to the EFS
   zone_id            = "${var.zone_id}"
+
+  # EB/EC2 instances and DataPipeline instances are allowed to connect to the EFS
+  security_groups = ["${module.elastic_beanstalk_environment.security_group_id}", "${module.efs_backup.security_group_id}"]
+
+  delimiter  = "${var.delimiter}"
+  attributes = ["${compact(concat(var.attributes, list("efs")))}"]
+  tags       = "${var.tags}"
+}
+
+# EFS backup to S3
+module "efs_backup" {
+  source                             = "git::https://github.com/cloudposse/terraform-aws-efs-backup.git?ref=tags/0.3.3"
+  name                               = "${var.name}"
+  stage                              = "${var.stage}"
+  namespace                          = "${var.namespace}"
+  region                             = "${var.aws_region}"
+  vpc_id                             = "${var.vpc_id}"
+  efs_mount_target_id                = "${element(module.efs.mount_target_ids, 0)}"
+  use_ip_address                     = "false"
+  noncurrent_version_expiration_days = "${var.noncurrent_version_expiration_days}"
+  ssh_key_pair                       = "${var.keypair}"
+  modify_security_group              = "false"
+  datapipeline_config                = "${var.datapipeline_config}"
+  delimiter                          = "${var.delimiter}"
+  attributes                         = ["${compact(concat(var.attributes, list("efs-backup")))}"]
+  tags                               = "${var.tags}"
 }
 
 # CodePipeline/CodeBuild
 module "cicd" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.4.1"
-  attributes         = ["cicd"]
+  source             = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.4.4"
   namespace          = "${var.namespace}"
   name               = "${var.name}"
   stage              = "${var.stage}"
@@ -95,4 +126,7 @@ module "cicd" {
   aws_account_id     = "${var.aws_account_id}"
   image_repo_name    = "${module.ecr.repository_name}"
   image_tag          = "${var.image_tag}"
+  delimiter          = "${var.delimiter}"
+  attributes         = ["${compact(concat(var.attributes, list("cicd")))}"]
+  tags               = "${var.tags}"
 }

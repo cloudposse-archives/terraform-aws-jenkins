@@ -51,7 +51,7 @@ variable "availability_zones" {
 
 variable "healthcheck_url" {
   type        = "string"
-  default     = "/"
+  default     = "/login"
   description = "Application Health Check URL. Elastic Beanstalk will call this URL to check the health of the application running on EC2 instances"
 }
 
@@ -153,4 +153,40 @@ variable "env_vars" {
   type        = "map"
   default     = {}
   description = "Map of custom ENV variables to be provided to the Jenkins application running on Elastic Beanstalk, e.g. env_vars = { JENKINS_USER = 'admin' JENKINS_PASS = 'xxxxxx' }"
+}
+
+variable "noncurrent_version_expiration_days" {
+  type        = "string"
+  default     = "35"
+  description = "Backup S3 bucket noncurrent version expiration days"
+}
+
+variable "delimiter" {
+  type        = "string"
+  default     = "-"
+  description = "Delimiter to be used between `name`, `namespace`, `stage`, etc."
+}
+
+variable "attributes" {
+  type        = "list"
+  default     = []
+  description = "Additional attributes (e.g. `policy` or `role`)"
+}
+
+variable "tags" {
+  type        = "map"
+  default     = {}
+  description = "Additional tags (e.g. `map('BusinessUnit`,`XYZ`)"
+}
+
+variable "datapipeline_config" {
+  type        = "map"
+  description = "DataPipeline configuration options"
+
+  default = {
+    instance_type = "t2.micro"
+    email         = ""
+    period        = "24 hours"
+    timeout       = "60 Minutes"
+  }
 }
