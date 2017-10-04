@@ -109,7 +109,7 @@ module "efs_backup" {
 
 # CodePipeline/CodeBuild
 module "cicd" {
-  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.4.5"
+  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.4.6"
   namespace           = "${var.namespace}"
   name                = "${var.name}"
   stage               = "${var.stage}"
