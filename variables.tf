@@ -22,8 +22,8 @@ variable "stage" {
 
 variable "description" {
   type        = "string"
-  default     = ""
-  description = "Description, e.g. 'Jenkins running on Elastic Beanstalk as Docker container'. Will be used as Elastic Beanstalk Application description"
+  default     = "Jenkins server as Docker container running on Elastic Benastalk"
+  description = "Will be used as Elastic Beanstalk Application description"
 }
 
 # http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html#concepts.platforms.docker
@@ -79,7 +79,7 @@ variable "zone_id" {
 variable "security_groups" {
   type        = "list"
   default     = []
-  description = "List of security groups to be allowed to access the EC2 instances"
+  description = "List of security groups to be allowed to connect to the EC2 instances"
 }
 
 variable "keypair" {

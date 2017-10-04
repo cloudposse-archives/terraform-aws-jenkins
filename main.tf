@@ -12,7 +12,7 @@ module "elastic_beanstalk_application" {
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.2.4"
+  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.2.6"
   namespace     = "${var.namespace}"
   name          = "${var.name}"
   stage         = "${var.stage}"
@@ -20,7 +20,7 @@ module "elastic_beanstalk_environment" {
   app           = "${module.elastic_beanstalk_application.app_name}"
   instance_type = "${var.master_instance_type}"
 
-  # Set `min` nad `max` number of running EC2 instances to `1` since we want only one Jenkins master running at any time
+  # Set `min` and `max` number of running EC2 instances to `1` since we want only one Jenkins master running at any time
   autoscale_min = 1
   autoscale_max = 1
 
@@ -43,6 +43,7 @@ module "elastic_beanstalk_environment" {
   env_default_key     = "${var.env_default_key}"
   env_default_value   = "${var.env_default_value}"
 
+  # Provide EFS DNS name to EB in the `EFS_HOST` ENV var. EC2 instance will mount to the EFS filesystem and use it to store Jenkins state
   env_vars = "${
       merge(
         map(
@@ -79,7 +80,7 @@ module "efs" {
   availability_zones = "${var.availability_zones}"
   zone_id            = "${var.zone_id}"
 
-  # EB/EC2 instances and DataPipeline instances are allowed to connect to the EFS
+  # EC2 instances (from `elastic_beanstalk_environment`) and DataPipeline instances (from `efs_backup`) are allowed to connect to the EFS
   security_groups = ["${module.elastic_beanstalk_environment.security_group_id}", "${module.efs_backup.security_group_id}"]
 
   delimiter  = "${var.delimiter}"
@@ -108,25 +109,26 @@ module "efs_backup" {
 
 # CodePipeline/CodeBuild
 module "cicd" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.4.4"
-  namespace          = "${var.namespace}"
-  name               = "${var.name}"
-  stage              = "${var.stage}"
-  app                = "${module.elastic_beanstalk_application.app_name}"
-  env                = "${module.elastic_beanstalk_environment.name}"
-  enabled            = "true"
-  github_oauth_token = "${var.github_oauth_token}"
-  repo_owner         = "${var.github_organization}"
-  repo_name          = "${var.github_repo_name}"
-  branch             = "${var.github_branch}"
-  build_image        = "${var.build_image}"
-  build_compute_type = "${var.build_compute_type}"
-  privileged_mode    = "true"
-  aws_region         = "${var.aws_region}"
-  aws_account_id     = "${var.aws_account_id}"
-  image_repo_name    = "${module.ecr.repository_name}"
-  image_tag          = "${var.image_tag}"
-  delimiter          = "${var.delimiter}"
-  attributes         = ["${compact(concat(var.attributes, list("cicd")))}"]
-  tags               = "${var.tags}"
+  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.4.5"
+  namespace           = "${var.namespace}"
+  name                = "${var.name}"
+  stage               = "${var.stage}"
+  app                 = "${module.elastic_beanstalk_application.app_name}"
+  env                 = "${module.elastic_beanstalk_environment.name}"
+  enabled             = "true"
+  github_oauth_token  = "${var.github_oauth_token}"
+  repo_owner          = "${var.github_organization}"
+  repo_name           = "${var.github_repo_name}"
+  branch              = "${var.github_branch}"
+  build_image         = "${var.build_image}"
+  build_compute_type  = "${var.build_compute_type}"
+  privileged_mode     = "true"
+  aws_region          = "${var.aws_region}"
+  aws_account_id      = "${var.aws_account_id}"
+  image_repo_name     = "${module.ecr.repository_name}"
+  image_tag           = "${var.image_tag}"
+  poll_source_changes = "true"
+  delimiter           = "${var.delimiter}"
+  attributes          = ["${compact(concat(var.attributes, list("cicd")))}"]
+  tags                = "${var.tags}"
 }
