@@ -61,6 +61,12 @@ variable "loadbalancer_type" {
   description = "Load Balancer type, e.g. 'application' or 'classic'"
 }
 
+variable "loadbalancer_certificate_arn" {
+  type        = "string"
+  default     = ""
+  description = "Load Balancer SSL certificate ARN"
+}
+
 variable "public_subnets" {
   type        = "list"
   description = "List of public subnets to place Elastic Load Balancer"
