@@ -88,10 +88,10 @@ variable "security_groups" {
   description = "List of security groups to be allowed to connect to the EC2 instances"
 }
 
-variable "keypair" {
+variable "ssh_key_pair" {
   type        = "string"
   default     = ""
-  description = "The path to the private key for SSH access to the EC2 instances"
+  description = "Name of SSH key that will be deployed on DataPipeline instance. The key should be present in AWS"
 }
 
 variable "github_oauth_token" {
