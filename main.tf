@@ -39,7 +39,7 @@ module "elastic_beanstalk_environment" {
   public_subnets               = "${var.public_subnets}"
   private_subnets              = "${var.private_subnets}"
   security_groups              = "${var.security_groups}"
-  keypair                      = "${var.keypair}"
+  keypair                      = "${var.ssh_key_pair}"
   solution_stack_name          = "${var.solution_stack_name}"
   env_default_key              = "${var.env_default_key}"
   env_default_value            = "${var.env_default_value}"
@@ -91,7 +91,7 @@ module "efs" {
 
 # EFS backup to S3
 module "efs_backup" {
-  source                             = "git::https://github.com/cloudposse/terraform-aws-efs-backup.git?ref=tags/0.3.3"
+  source                             = "git::https://github.com/cloudposse/terraform-aws-efs-backup.git?ref=tags/0.3.4"
   name                               = "${var.name}"
   stage                              = "${var.stage}"
   namespace                          = "${var.namespace}"
@@ -100,7 +100,7 @@ module "efs_backup" {
   efs_mount_target_id                = "${element(module.efs.mount_target_ids, 0)}"
   use_ip_address                     = "false"
   noncurrent_version_expiration_days = "${var.noncurrent_version_expiration_days}"
-  ssh_key_pair                       = "${var.keypair}"
+  ssh_key_pair                       = "${var.ssh_key_pair}"
   modify_security_group              = "false"
   datapipeline_config                = "${var.datapipeline_config}"
   delimiter                          = "${var.delimiter}"
