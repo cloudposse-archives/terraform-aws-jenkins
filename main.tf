@@ -91,7 +91,7 @@ module "efs" {
 
 # EFS backup to S3
 module "efs_backup" {
-  source                             = "git::https://github.com/cloudposse/terraform-aws-efs-backup.git?ref=tags/0.3.4"
+  source                             = "git::https://github.com/cloudposse/terraform-aws-efs-backup.git?ref=tags/0.3.5"
   name                               = "${var.name}"
   stage                              = "${var.stage}"
   namespace                          = "${var.namespace}"
