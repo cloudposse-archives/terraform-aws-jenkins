@@ -43,6 +43,7 @@ After all of the `AWS` resources are created,
   * Mount the `EFS` filesystem to a directory on the `EC2` instance
   * Backup the directory to an `S3` bucket
   * Notify about the status of the backup (`Success` or `Failure`) via email
+  * Destroy the EC2 instance
 
 
 ![jenkins build server architecture](https://user-images.githubusercontent.com/52489/30888694-d07d68c8-a2d6-11e7-90b2-d8275ef94f39.png)
