@@ -13,6 +13,7 @@ This module uses the following CloudPosse `Terraform` modules:
 * https://github.com/cloudposse/terraform-aws-efs
 * https://github.com/cloudposse/terraform-aws-efs-backup
 * https://github.com/cloudposse/terraform-aws-cicd
+* https://github.com/cloudposse/terraform-aws-codebuild
 
 
 The module will create the following `AWS` resources:
