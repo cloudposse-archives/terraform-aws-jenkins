@@ -11,16 +11,17 @@ module "jenkins" {
   stage       = "prod"
   description = "Jenkins server as Docker container running on Elastic Beanstalk"
 
-  aws_account_id      = "000111222333"
-  aws_region          = "us-west-2"
-  availability_zones  = ["${data.aws_availability_zones.available.names}"]
-  solution_stack_name = "64bit Amazon Linux 2017.03 v2.7.4 running Docker 17.03.2-ce"
-  vpc_id              = "vpc-00112233"
-  zone_id             = "ZXXXXXXXXXXX"
-  public_subnets      = "${module.vpc.public_subnet_ids}"
-  private_subnets     = "${module.vpc.private_subnet_ids}"
-  loadbalancer_type   = "application"
-  ssh_key_pair        = "key-test-1"
+  aws_account_id               = "000111222333"
+  aws_region                   = "us-west-2"
+  availability_zones           = ["${data.aws_availability_zones.available.names}"]
+  solution_stack_name          = "64bit Amazon Linux 2017.03 v2.7.4 running Docker 17.03.2-ce"
+  vpc_id                       = "vpc-00112233"
+  zone_id                      = "ZXXXXXXXXXXX"
+  public_subnets               = "${module.vpc.public_subnet_ids}"
+  private_subnets              = "${module.vpc.private_subnet_ids}"
+  loadbalancer_type            = "application"
+  loadbalancer_certificate_arn = "XXXXXXXXXXXXXXXXX"
+  ssh_key_pair                 = "key-test-1"
 
   github_oauth_token  = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   github_organization = "cloudposse"
