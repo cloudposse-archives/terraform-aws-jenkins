@@ -39,11 +39,11 @@ After all of the `AWS` resources are created,
 
 `DataPipeline` will run on the specified schedule and will backup all `Jenkins` files to an `S3` bucket by doing the following:
 
-  * Spawn an EC2 instance (`t2.micro` in the example below)
+  * Spawn an `EC2` instance (`t2.micro` in the example below)
   * Mount the `EFS` filesystem to a directory on the `EC2` instance
   * Backup the directory to an `S3` bucket
   * Notify about the status of the backup (`Success` or `Failure`) via email
-  * Destroy the EC2 instance
+  * Destroy the `EC2` instance
 
 
 ![jenkins build server architecture](https://user-images.githubusercontent.com/52489/30888694-d07d68c8-a2d6-11e7-90b2-d8275ef94f39.png)
