@@ -23,7 +23,7 @@ variable "stage" {
 variable "description" {
   type        = "string"
   default     = "Jenkins server as Docker container running on Elastic Benastalk"
-  description = "Will be used as Elastic Beanstalk Application description"
+  description = "Will be used as Elastic Beanstalk application description"
 }
 
 # http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html#concepts.platforms.docker
@@ -36,7 +36,7 @@ variable "solution_stack_name" {
 variable "master_instance_type" {
   type        = "string"
   default     = "t2.medium"
-  description = "EC2 instance type for Jenkins, e.g. 't2.medium'"
+  description = "EC2 instance type for Jenkins master, e.g. 't2.medium'"
 }
 
 variable "vpc_id" {
@@ -63,8 +63,7 @@ variable "loadbalancer_type" {
 
 variable "loadbalancer_certificate_arn" {
   type        = "string"
-  default     = ""
-  description = "Load Balancer SSL certificate ARN"
+  description = "Load Balancer SSL certificate ARN. The certificate must be present in AWS Certificate Manager"
 }
 
 variable "public_subnets" {
@@ -91,13 +90,13 @@ variable "security_groups" {
 variable "ssh_key_pair" {
   type        = "string"
   default     = ""
-  description = "Name of SSH key that will be deployed on DataPipeline instance. The key should be present in AWS"
+  description = "Name of SSH key that will be deployed on Elastic Beanstalk and DataPipeline instance. The key should be present in AWS"
 }
 
 variable "github_oauth_token" {
   type        = "string"
   default     = ""
-  description = "GitHub Oauth Token for accesing private repositories. Leave it empty when deploying a public 'Jenkins' repository, e.g. https://github.com/cloudposse/jenkins"
+  description = "GitHub Oauth Token for accessing private repositories. Leave it empty when deploying a public 'Jenkins' repository, e.g. https://github.com/cloudposse/jenkins"
 }
 
 variable "github_organization" {
@@ -146,13 +145,13 @@ variable "image_tag" {
 variable "env_default_key" {
   type        = "string"
   default     = "DEFAULT_ENV_%d"
-  description = "Default ENV variable key for Elastic Beanstalk 'aws:elasticbeanstalk:application:environment` setting"
+  description = "Default ENV variable key for Elastic Beanstalk `aws:elasticbeanstalk:application:environment` setting"
 }
 
 variable "env_default_value" {
   type        = "string"
   default     = "UNSET"
-  description = "Default ENV variable value for Elastic Beanstalk 'aws:elasticbeanstalk:application:environment` setting"
+  description = "Default ENV variable value for Elastic Beanstalk `aws:elasticbeanstalk:application:environment` setting"
 }
 
 variable "env_vars" {
