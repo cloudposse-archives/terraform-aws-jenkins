@@ -1,11 +1,14 @@
 # terraform-aws-jenkins
 
-Terraform module to build a `Docker` image with [`Jenkins`](https://jenkins.io/), save it to an [`ECR`](https://aws.amazon.com/ecr/) repo, 
+## Introduction
+
+`terraform-aws-jenkins` is a Terraform module to build a `Docker` image with [`Jenkins`](https://jenkins.io/), save it to an [`ECR`](https://aws.amazon.com/ecr/) repo,
 and deploy to [`Elastic Beanstalk`](https://aws.amazon.com/elasticbeanstalk/) running [`Docker`](https://www.docker.com/) stack.
 
-This architecture and the `CI/CD` pattern of building and deploying `Jenkins` is enterprise-ready, scalable and highly-available.
+This is an enterprise-ready, scalable and highly-available architecture and the `CI/CD` pattern to build and deploy `Jenkins`.
 
-This module uses the following CloudPosse `Terraform` modules:
+
+The module uses these open-source Cloud Posse modules:
 
 * https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application
 * https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment
@@ -15,6 +18,8 @@ This module uses the following CloudPosse `Terraform` modules:
 * https://github.com/cloudposse/terraform-aws-cicd
 * https://github.com/cloudposse/terraform-aws-codebuild
 
+
+## Features
 
 The module will create the following `AWS` resources:
 
@@ -129,51 +134,51 @@ After all of the `AWS` resources are created,
 
 ## Input
 
-|  Name                              |  Default                                                          |  Description                                                                                                                            | Required |
-|:-----------------------------------|:-----------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------|:--------:|
-| namespace                          |                                                                   | Namespace (_e.g._ `cp` or `cloudposse`)                                                                                                 | Yes      |
-| stage                              |                                                                   | Stage (_e.g._ `prod`, `dev`, `staging`)                                                                                                 | Yes      |
-| name                               | `jenkins`                                                         | Name  of the application                                                                                                                | Yes      |
-| description                        |                                                                   | Will be used as `Elastic Beanstalk` application description                                                                             | Yes      |
-| aws_region                         | `us-west-2`                                                       | AWS Region to provision all the AWS resources in                                                                                        | Yes      |
-| solution_stack_name                | `64bit Amazon Linux 2017.03 v2.7.4 running Docker 17.03.2-ce`     | `Elastic Beanstalk` stack                                                                                                               | Yes      |
-| master_instance_type               | `t2.medium`                                                       | `EC2` instance type for `Jenkins` master                                                                                                | Yes      |
-| vpc_id                             |                                                                   | AWS `VPC` ID where module should operate (_e.g._ `vpc-a22222ee`)                                                                        | Yes      |
-| availability_zones                 |                                                                   | List of Availability Zones for `EFS`                                                                                                    | Yes      |
-| healthcheck_url                    | `/login`                                                          | Application Health Check URL. Elastic Beanstalk will call this URL to check the health of the application running on `EC2` instances    | Yes      |
-| loadbalancer_type                  | `application`                                                     | Load Balancer type, e.g. `application` or `classic`                                                                                     | Yes      |
-| loadbalancer_certificate_arn       |                                                                   | Load Balancer SSL certificate ARN. The certificate must be present in `AWS Certificate Manager`                                         | Yes      |
-| public_subnets                     |                                                                   | List of public subnets to place `Elastic Load Balancer`                                                                                 | Yes      |
-| private_subnets                    |                                                                   | List of private subnets to place `EC2` instances and `EFS`                                                                              | Yes      |
-| zone_id                            |                                                                   | `Route53` parent zone ID. The module will create sub-domain DNS records in the parent zone for the `EB` environment and `EFS`           | Yes      |
-| security_groups                    | `[]`                                                              | List of security groups to be allowed to connect to the EC2 instances                                                                   | No       |
-| ssh_key_pair                       | ""                                                                | Name of `SSH` key that will be deployed on `Elastic Beanstalk` and `DataPipeline` instance. The key should be present in AWS            | No       |
-| github_oauth_token                 | ""                                                                | GitHub Oauth Token for accessing private repositories. Leave it empty when deploying a public `Jenkins` repository                      | No       |
-| github_organization                | `cloudposse`                                                      | GitHub organization, _e.g._ `cloudposse`. By default, this module will deploy 'https://github.com/cloudposse/jenkins' repository        | Yes      |
-| github_repo_name                   | `jenkins`                                                         | GitHub repository name, _e.g._ `jenkins`. By default, this module will deploy 'https://github.com/cloudposse/jenkins' repository        | Yes      |
-| github_branch                      | `master`                                                          | GitHub repository branch, _e.g._ `master`. By default, this module will deploy 'https://github.com/cloudposse/jenkins' master branch    | Yes      |
-| build_image                        | `aws/codebuild/docker:1.12.1`                                     | `CodeBuild` build image                                                                                                                 | Yes      |
-| build_compute_type                 | `BUILD_GENERAL1_SMALL`                                            | `CodeBuild` compute type (instance type)                                                                                                | Yes      |
-| aws_account_id                     |                                                                   | AWS Account ID. Used as `CodeBuild` ENV variable `$AWS_ACCOUNT_ID` when building `Docker` images                                        | Yes      |
-| image_tag                          | `latest`                                                          | Docker image tag in the `ECR` repository, _e.g._ `latest`. Used as `CodeBuild` ENV variable `$IMAGE_TAG` when building `Docker` images  | Yes      |
-| env_default_key                    | `DEFAULT_ENV_%d`                                                  | Default ENV variable key for `Elastic Beanstalk` `aws:elasticbeanstalk:application:environment` setting                                 | No       |
-| env_default_value                  | `UNSET`                                                           | Default ENV variable value for `Elastic Beanstalk` `aws:elasticbeanstalk:application:environment` setting                               | No       |
-| env_vars                           | `{}`                                                              | Map of custom `ENV` variables to be provided to the `Jenkins` application running on `Elastic Beanstalk`                                | No       |
-| noncurrent_version_expiration_days | `35`                                                              | `S3` object versions expiration period (days) for backups                                                                               | Yes      |
+|  Name                              |  Default                         |  Description                                                                                                                            | Required |
+|:-----------------------------------|:--------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------|:--------:|
+| namespace                          |                                  | Namespace (_e.g._ `cp` or `cloudposse`)                                                                                                 | Yes      |
+| stage                              |                                  | Stage (_e.g._ `prod`, `dev`, `staging`)                                                                                                 | Yes      |
+| name                               | `jenkins`                        | Name  of the application                                                                                                                | Yes      |
+| description                        |                                  | Will be used as `Elastic Beanstalk` application description                                                                             | Yes      |
+| aws_region                         | `us-west-2`                      | AWS Region to provision all the AWS resources in                                                                                        | Yes      |
+| solution_stack_name                | `64bit Amazon Linux 2017.03 v2.7.4 running Docker 17.03.2-ce` | `Elastic Beanstalk` stack                                                                                                               | Yes      |
+| master_instance_type               | `t2.medium`                      | `EC2` instance type for `Jenkins` master                                                                                                | Yes      |
+| vpc_id                             |                                  | AWS `VPC` ID where module should operate (_e.g._ `vpc-a22222ee`)                                                                        | Yes      |
+| availability_zones                 |                                  | List of Availability Zones for `EFS`                                                                                                    | Yes      |
+| healthcheck_url                    | `/login`                         | Application Health Check URL. Elastic Beanstalk will call this URL to check the health of the application running on `EC2` instances    | Yes      |
+| loadbalancer_type                  | `application`                    | Load Balancer type, e.g. `application` or `classic`                                                                                     | Yes      |
+| loadbalancer_certificate_arn       |                                  | Load Balancer SSL certificate ARN. The certificate must be present in `AWS Certificate Manager`                                         | Yes      |
+| public_subnets                     |                                  | List of public subnets to place `Elastic Load Balancer`                                                                                 | Yes      |
+| private_subnets                    |                                  | List of private subnets to place `EC2` instances and `EFS`                                                                              | Yes      |
+| zone_id                            |                                  | `Route53` parent zone ID. The module will create sub-domain DNS records in the parent zone for the `EB` environment and `EFS`           | Yes      |
+| security_groups                    | `[]`                             | List of security groups to be allowed to connect to the EC2 instances                                                                   | No       |
+| ssh_key_pair                       | ""                               | Name of `SSH` key that will be deployed on `Elastic Beanstalk` and `DataPipeline` instance. The key should be present in AWS            | No       |
+| github_oauth_token                 | ""                               | GitHub Oauth Token for accessing private repositories. Leave it empty when deploying a public `Jenkins` repository                      | No       |
+| github_organization                | `cloudposse`                     | GitHub organization, _e.g._ `cloudposse`. By default, this module will deploy 'https://github.com/cloudposse/jenkins' repository        | Yes      |
+| github_repo_name                   | `jenkins`                        | GitHub repository name, _e.g._ `jenkins`. By default, this module will deploy 'https://github.com/cloudposse/jenkins' repository        | Yes      |
+| github_branch                      | `master`                         | GitHub repository branch, _e.g._ `master`. By default, this module will deploy 'https://github.com/cloudposse/jenkins' master branch    | Yes      |
+| build_image                        | `aws/codebuild/docker:1.12.1`    | `CodeBuild` build image                                                                                                                 | Yes      |
+| build_compute_type                 | `BUILD_GENERAL1_SMALL`           | `CodeBuild` compute type (instance type)                                                                                                | Yes      |
+| aws_account_id                     |                                  | AWS Account ID. Used as `CodeBuild` ENV variable `$AWS_ACCOUNT_ID` when building `Docker` images                                        | Yes      |
+| image_tag                          | `latest`                         | Docker image tag in the `ECR` repository, _e.g._ `latest`. Used as `CodeBuild` ENV variable `$IMAGE_TAG` when building `Docker` images  | Yes      |
+| env_default_key                    | `DEFAULT_ENV_%d`                 | Default ENV variable key for `Elastic Beanstalk` `aws:elasticbeanstalk:application:environment` setting                                 | No       |
+| env_default_value                  | `UNSET`                          | Default ENV variable value for `Elastic Beanstalk` `aws:elasticbeanstalk:application:environment` setting                               | No       |
+| env_vars                           | `{}`                             | Map of custom `ENV` variables to be provided to the `Jenkins` application running on `Elastic Beanstalk`                                | No       |
+| noncurrent_version_expiration_days | `35`                             | `S3` object versions expiration period (days) for backups                                                                               | Yes      |
 | datapipeline_config                | `${map("instance_type", "t2.micro", "email", "", "period", "24 hours", "timeout", "60 Minutes")}"`| DataPipeline configuration options                                                                      | Yes      |
-| attributes                         | `[]`                                                              | Additional attributes (_e.g._ `vpc`)                                                                                                    | No       |
-| tags                               | `{}`                                                              | Additional tags (_e.g._ `map("BusinessUnit","ABC")`                                                                                     | No       |
-| delimiter                          | `-`                                                               | Delimiter to be used between `name`, `namespace`, `stage` and `attributes`                                                              | No       |
+| attributes                         | `[]`                             | Additional attributes (_e.g._ `vpc`)                                                                                                    | No       |
+| tags                               | `{}`                             | Additional tags (_e.g._ `map("BusinessUnit","ABC")`                                                                                     | No       |
+| delimiter                          | `-`                              | Delimiter to be used between `name`, `namespace`, `stage` and `attributes`                                                              | No       |
 
 
 ### `datapipeline_config` variables
 
-|  Name                              |  Default       |  Description                                                                 | Required |
-|:-----------------------------------|:--------------:|:-----------------------------------------------------------------------------|:--------:|
-| instance_type                      | `t2.micro`     | Instance type to use in `DataPipeline`                                       | Yes      |
-| email                              | ""             | Email to use in `SNS`. Needs to be provided, otherwise the module will fail  | Yes      |
-| period                             | `24 hours`     | Frequency of pipeline execution (frequency of backups)                       | Yes      |
-| timeout                            | `60 Minutes`   | Pipeline execution timeout                                                   | Yes      |
+|  Name               |  Default       |  Description                                                                 | Required |
+|:--------------------|:--------------:|:-----------------------------------------------------------------------------|:--------:|
+| instance_type       | `t2.micro`     | Instance type to use in `DataPipeline`                                       | Yes      |
+| email               | ""             | Email to use in `SNS`. Needs to be provided, otherwise the module will fail  | Yes      |
+| period              | `24 hours`     | Frequency of pipeline execution (frequency of backups)                       | Yes      |
+| timeout             | `60 Minutes`   | Pipeline execution timeout                                                   | Yes      |
 
 
 
@@ -194,6 +199,80 @@ The following attributes do not have default values and will be asked for when r
 * http://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html
 
 
+## Help
+
+**Got a question?**
+
+File a GitHub [issue](https://github.com/cloudposse/terraform-aws-jenkins/issues), send us an [email](mailto:hello@cloudposse.com) or reach out to us on [Gitter](https://gitter.im/cloudposse/).
+
+
+## Contributing
+
+### Bug Reports & Feature Requests
+
+Please use the [issue tracker](https://github.com/cloudposse/terraform-aws-jenkins/issues) to report any bugs or file feature requests.
+
+### Developing
+
+If you are interested in being a contributor and want to get involved in developing `terraform-aws-jenkins`, we would love to hear from you! Shoot us an [email](mailto:hello@cloudposse.com).
+
+In general, PRs are welcome. We follow the typical "fork-and-pull" Git workflow.
+
+ 1. **Fork** the repo on GitHub
+ 2. **Clone** the project to your own machine
+ 3. **Commit** changes to your own branch
+ 4. **Push** your work back up to your fork
+ 5. Submit a **Pull request** so that we can review your changes
+
+**NOTE:** Be sure to merge the latest from "upstream" before making a pull request!
+
+
 ## License
 
-Apache 2 License. See [`LICENSE`](LICENSE) for full details.
+[APACHE 2.0](LICENSE) © 2017 [Cloud Posse, LLC](https://cloudposse.com)
+
+See [`LICENSE`](LICENSE) for full details.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+
+## About
+
+`terraform-aws-jenkins` is maintained and funded by [Cloud Posse, LLC][website]. Like it? Please let us know at <hello@cloudposse.com>
+
+We love [Open Source Software](https://github.com/cloudposse/)!
+
+See [our other projects][community]
+or [hire us][hire] to help build your next cloud-platform.
+
+  [website]: http://cloudposse.com/
+  [community]: https://github.com/cloudposse/
+  [hire]: http://cloudposse.com/contact/
+
+### Contributors
+
+
+| [![Erik Osterman][erik_img]][erik_web]<br/>[Erik Osterman][erik_web] | [![Andriy Knysh][andriy_img]][andriy_web]<br/>[Andriy Knysh][andriy_web] |
+|-------------------------------------------------------|------------------------------------------------------------------|
+
+  [erik_img]: http://s.gravatar.com/avatar/88c480d4f73b813904e00a5695a454cb?s=144
+  [erik_web]: https://github.com/osterman/
+  [andriy_img]: https://avatars0.githubusercontent.com/u/7356997?v=4&u=ed9ce1c9151d552d985bdf5546772e14ef7ab617&s=144
+  [andriy_web]: https://github.com/aknysh/
+
+
