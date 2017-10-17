@@ -7,7 +7,6 @@ and deploy to [Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) runn
 
 This is an enterprise-ready, scalable and highly-available architecture and the CI/CD pattern to build and deploy Jenkins.
 
-
 The module uses these open-source Cloud Posse modules:
 
 * https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application
