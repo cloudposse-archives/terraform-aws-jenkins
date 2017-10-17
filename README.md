@@ -1,4 +1,4 @@
-# terraform-aws-jenkins
+# terraform-aws-jenkins [![Build Status](https://travis-ci.org/cloudposse/terraform-aws-jenkins.svg)](https://travis-ci.org/cloudposse/terraform-aws-jenkins)
 
 ## Introduction
 
