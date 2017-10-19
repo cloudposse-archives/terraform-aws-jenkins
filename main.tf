@@ -45,12 +45,12 @@ module "elastic_beanstalk_environment" {
   env_default_value            = "${var.env_default_value}"
 
   # Provide EFS DNS name to EB in the `EFS_HOST` ENV var. EC2 instance will mount to the EFS filesystem and use it to store Jenkins state
-  # Add slaves Security Group `EC2_SECURITY_GROUPS` (comma-separated if more than one). Will be used by Jenkins to init the EC2 plugin to launch slaves inside the Security Group
+  # Add slaves Security Group `JENKINS_SLAVE_SECURITY_GROUPS` (comma-separated if more than one). Will be used by Jenkins to init the EC2 plugin to launch slaves inside the Security Group
   env_vars = "${
       merge(
         map(
           "EFS_HOST", "${module.efs.dns_name}",
-          "EC2_SECURITY_GROUPS", "${aws_security_group.slaves.id}"
+          "JENKINS_SLAVE_SECURITY_GROUPS", "${aws_security_group.slaves.id}"
         ), var.env_vars
       )
     }"
