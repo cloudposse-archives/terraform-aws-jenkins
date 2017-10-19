@@ -45,10 +45,12 @@ module "elastic_beanstalk_environment" {
   env_default_value            = "${var.env_default_value}"
 
   # Provide EFS DNS name to EB in the `EFS_HOST` ENV var. EC2 instance will mount to the EFS filesystem and use it to store Jenkins state
+  # Add slaves Security Group `EC2_SECURITY_GROUPS` (comma-separated if more than one). Will be used by Jenkins to init the EC2 plugin to launch slaves inside the Security Group
   env_vars = "${
       merge(
         map(
-          "EFS_HOST", "${module.efs.dns_name}"
+          "EFS_HOST", "${module.efs.dns_name}",
+          "EC2_SECURITY_GROUPS", "${aws_security_group.slaves.id}"
         ), var.env_vars
       )
     }"
@@ -132,4 +134,45 @@ module "cicd" {
   delimiter           = "${var.delimiter}"
   attributes          = ["${compact(concat(var.attributes, list("cicd")))}"]
   tags                = "${var.tags}"
+}
+
+# Label for EC2 slaves
+module "label_slaves" {
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.2.2"
+  namespace  = "${var.namespace}"
+  name       = "${var.name}"
+  stage      = "${var.stage}"
+  delimiter  = "${var.delimiter}"
+  attributes = ["${compact(concat(var.attributes, list("slaves")))}"]
+  tags       = "${var.tags}"
+}
+
+# Security Group for EC2 slaves
+resource "aws_security_group" "slaves" {
+  name        = "${module.label_slaves.id}"
+  description = "Security Group for Jenkins EC2 slaves"
+  vpc_id      = "${var.vpc_id}"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = ["${module.elastic_beanstalk_environment.security_group_id}"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = "${module.label_slaves.tags}"
 }
