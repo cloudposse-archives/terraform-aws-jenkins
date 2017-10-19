@@ -12,7 +12,7 @@ module "elastic_beanstalk_application" {
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.2.6"
+  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.2.8"
   namespace     = "${var.namespace}"
   name          = "${var.name}"
   stage         = "${var.stage}"
@@ -45,10 +45,12 @@ module "elastic_beanstalk_environment" {
   env_default_value            = "${var.env_default_value}"
 
   # Provide EFS DNS name to EB in the `EFS_HOST` ENV var. EC2 instance will mount to the EFS filesystem and use it to store Jenkins state
+  # Add slaves Security Group `JENKINS_SLAVE_SECURITY_GROUPS` (comma-separated if more than one). Will be used by Jenkins to init the EC2 plugin to launch slaves inside the Security Group
   env_vars = "${
       merge(
         map(
-          "EFS_HOST", "${module.efs.dns_name}"
+          "EFS_HOST", "${module.efs.dns_name}",
+          "JENKINS_SLAVE_SECURITY_GROUPS", "${aws_security_group.slaves.id}"
         ), var.env_vars
       )
     }"
@@ -132,4 +134,91 @@ module "cicd" {
   delimiter           = "${var.delimiter}"
   attributes          = ["${compact(concat(var.attributes, list("cicd")))}"]
   tags                = "${var.tags}"
+}
+
+# Label for EC2 slaves
+module "label_slaves" {
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.2.2"
+  namespace  = "${var.namespace}"
+  name       = "${var.name}"
+  stage      = "${var.stage}"
+  delimiter  = "${var.delimiter}"
+  attributes = ["${compact(concat(var.attributes, list("slaves")))}"]
+  tags       = "${var.tags}"
+}
+
+# Security Group for EC2 slaves
+resource "aws_security_group" "slaves" {
+  name        = "${module.label_slaves.id}"
+  description = "Security Group for Jenkins EC2 slaves"
+  vpc_id      = "${var.vpc_id}"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = ["${module.elastic_beanstalk_environment.security_group_id}"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = "${module.label_slaves.tags}"
+}
+
+# Policy document with permissions to launch new EC2 instances
+# https://wiki.jenkins.io/display/JENKINS/Amazon+EC2+Plugin
+data "aws_iam_policy_document" "slaves" {
+  statement {
+    sid = "AllowLaunchingEC2Instances"
+
+    actions = [
+      "ec2:DescribeSpotInstanceRequests",
+      "ec2:CancelSpotInstanceRequests",
+      "ec2:GetConsoleOutput",
+      "ec2:RequestSpotInstances",
+      "ec2:RunInstances",
+      "ec2:StartInstances",
+      "ec2:StopInstances",
+      "ec2:TerminateInstances",
+      "ec2:CreateTags",
+      "ec2:DeleteTags",
+      "ec2:DescribeInstances",
+      "ec2:DescribeKeyPairs",
+      "ec2:DescribeRegions",
+      "ec2:DescribeImages",
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "iam:PassRole",
+    ]
+
+    resources = ["*"]
+    effect    = "Allow"
+  }
+}
+
+# Policy for the EB EC2 instance profile to allow launching Jenkins slaves
+resource "aws_iam_policy" "slaves" {
+  name        = "${module.label_slaves.id}"
+  path        = "/"
+  description = "Policy for EC2 instance profile to allow launching Jenkins slaves"
+  policy      = "${data.aws_iam_policy_document.slaves.json}"
+}
+
+# Attach Policy to the EC2 instance profile to allow Jenkins master to launch and control slave EC2 instances
+resource "aws_iam_role_policy_attachment" "slaves" {
+  role       = "${module.elastic_beanstalk_environment.ec2_instance_profile_role_name}"
+  policy_arn = "${aws_iam_policy.slaves.arn}"
 }
