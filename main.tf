@@ -49,7 +49,7 @@ module "elastic_beanstalk_environment" {
   env_vars = "${
       merge(
         map(
-          "EFS_HOST", "${module.efs.dns_name}",
+          "EFS_HOST", "${var.use_efs_ip_address ? module.efs.mount_target_ids[0].ip_address : module.efs.dns_name}",
           "JENKINS_SLAVE_SECURITY_GROUPS", "${aws_security_group.slaves.id}"
         ), var.env_vars
       )
@@ -112,7 +112,7 @@ module "efs_backup" {
 
 # CodePipeline/CodeBuild to build Jenkins Docker image, store it to a ECR repo, and deploy it to Elastic Beanstalk running Docker stack
 module "cicd" {
-  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.4.6"
+  source              = "git::git?ref=tags/0.4.6"
   namespace           = "${var.namespace}"
   name                = "${var.name}"
   stage               = "${var.stage}"

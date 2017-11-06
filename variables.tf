@@ -195,3 +195,7 @@ variable "datapipeline_config" {
     timeout       = "60 Minutes"
   }
 }
+
+variable "use_efs_ip_address" {
+  default = false
+}
