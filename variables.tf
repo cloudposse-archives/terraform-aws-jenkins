@@ -197,5 +197,5 @@ variable "datapipeline_config" {
 }
 
 variable "use_efs_ip_address" {
-  default = false
+  default = "false"
 }
