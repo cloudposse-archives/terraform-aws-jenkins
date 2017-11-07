@@ -74,7 +74,7 @@ module "ecr" {
 
 # EFS to store Jenkins state (settings, jobs, etc.)
 module "efs" {
-  source             = "../terraform-aws-efs"
+  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.3.2"
   namespace          = "${var.namespace}"
   name               = "${var.name}"
   stage              = "${var.stage}"
