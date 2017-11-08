@@ -49,7 +49,8 @@ module "elastic_beanstalk_environment" {
   env_vars = "${
       merge(
         map(
-          "EFS_HOST", "${module.efs.dns_name}",
+          "EFS_HOST", "${var.use_efs_ip_address ? module.efs.mount_target_ips[0] : module.efs.dns_name}",
+          "USE_EFS_IP", "${var.use_efs_ip_address}",
           "JENKINS_SLAVE_SECURITY_GROUPS", "${aws_security_group.slaves.id}"
         ), var.env_vars
       )
@@ -73,7 +74,7 @@ module "ecr" {
 
 # EFS to store Jenkins state (settings, jobs, etc.)
 module "efs" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.3.1"
+  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.3.2"
   namespace          = "${var.namespace}"
   name               = "${var.name}"
   stage              = "${var.stage}"
@@ -100,7 +101,7 @@ module "efs_backup" {
   region                             = "${var.aws_region}"
   vpc_id                             = "${var.vpc_id}"
   efs_mount_target_id                = "${element(module.efs.mount_target_ids, 0)}"
-  use_ip_address                     = "false"
+  use_ip_address                     = "${var.use_efs_ip_address}"
   noncurrent_version_expiration_days = "${var.noncurrent_version_expiration_days}"
   ssh_key_pair                       = "${var.ssh_key_pair}"
   modify_security_group              = "false"
