@@ -15,7 +15,7 @@ module "jenkins" {
   aws_region                   = "us-west-2"
   availability_zones           = ["${data.aws_availability_zones.available.names}"]
   solution_stack_name          = "64bit Amazon Linux 2017.03 v2.7.4 running Docker 17.03.2-ce"
-  vpc_id                       = "vpc-00112233"
+  vpc_id                       = "${module.vpc.vpc_id}"
   zone_id                      = "ZXXXXXXXXXXX"
   public_subnets               = "${module.vpc.public_subnet_ids}"
   private_subnets              = "${module.vpc.private_subnet_ids}"
