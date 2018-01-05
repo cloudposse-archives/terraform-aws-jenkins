@@ -11,6 +11,7 @@ module "jenkins" {
   stage       = "prod"
   description = "Jenkins server as Docker container running on Elastic Beanstalk"
 
+  master_instance_type         = "t2.medium"
   aws_account_id               = "000111222333"
   aws_region                   = "us-west-2"
   availability_zones           = ["${data.aws_availability_zones.available.names}"]
@@ -21,9 +22,9 @@ module "jenkins" {
   private_subnets              = "${module.vpc.private_subnet_ids}"
   loadbalancer_type            = "application"
   loadbalancer_certificate_arn = "XXXXXXXXXXXXXXXXX"
-  ssh_key_pair                 = "key-test-1"
+  ssh_key_pair                 = "ssh-key-jenkins"
 
-  github_oauth_token  = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  github_oauth_token  = ""
   github_organization = "cloudposse"
   github_repo_name    = "jenkins"
   github_branch       = "master"
@@ -33,7 +34,7 @@ module "jenkins" {
   image_tag          = "latest"
 
   datapipeline_config = {
-    instance_type = "t2.micro"
+    instance_type = "t2.medium"
     email         = "me@mycompany.com"
     period        = "12 hours"
     timeout       = "60 Minutes"
@@ -54,17 +55,37 @@ module "jenkins" {
   }
 }
 
-# Terraform module to create a VPC with public and private subnets
 module "vpc" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=master"
-  availability_zones = "${data.aws_availability_zones.available.names}"
-  namespace          = "cp"
-  name               = "jenkins"
-  stage              = "prod"
-  region             = "us-west-2"
-  cidr_block         = "10.0.0.0/16"
-  delimiter          = "-"
-  attributes         = ["vpc"]
+  source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=master"
+  namespace  = "cp"
+  name       = "jenkins"
+  stage      = "prod"
+  cidr_block = "10.0.0.0/16"
+  delimiter  = "-"
+  attributes = ["vpc"]
+
+  tags = {
+    BusinessUnit = "ABC"
+    Department   = "XYZ"
+  }
+}
+
+module "subnets" {
+  source                     = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
+  availability_zones         = ["${data.aws_availability_zones.available.names}"]
+  namespace                  = "cp"
+  name                       = "jenkins"
+  stage                      = "prod"
+  region                     = "us-west-2"
+  vpc_id                     = "${module.vpc.vpc_id}"
+  igw_id                     = "${module.vpc.igw_id}"
+  cidr_block                 = "10.0.0.0/16"
+  nat_gateway_enabled        = "true"
+  vpc_default_route_table_id = "${module.vpc.vpc_default_route_table_id}"
+  public_network_acl_id      = "${module.vpc.vpc_default_network_acl_id}"
+  private_network_acl_id     = "${module.vpc.vpc_default_network_acl_id}"
+  delimiter                  = "-"
+  attributes                 = ["subnet"]
 
   tags = {
     BusinessUnit = "ABC"
