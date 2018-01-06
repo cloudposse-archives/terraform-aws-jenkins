@@ -60,7 +60,7 @@ __DataPipeline__ will run on the specified schedule and will backup all Jenkins 
 For complete examples, see [examples](examples).
 
 
-### Deploy Jenkins into existing VPC and existing subnets
+### Deploy Jenkins into an existing VPC with existing subnets
 
 ```hcl
 data "aws_availability_zones" "available" {}
@@ -117,7 +117,7 @@ module "jenkins" {
 }
 ```
 
-### Deploy Jenkins into existing VPC and new subnets
+### Deploy Jenkins into an existing VPC and new subnets
 
 ```hcl
 data "aws_availability_zones" "available" {}
@@ -197,7 +197,7 @@ module "subnets" {
 }
 ```
 
-### Deploy Jenkins into new VPC and new subnets
+### Deploy Jenkins into a new VPC and new subnets
 
 ```hcl
 data "aws_availability_zones" "available" {}
