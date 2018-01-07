@@ -66,7 +66,7 @@ For complete examples, see [examples](examples).
 data "aws_availability_zones" "available" {}
 
 module "jenkins" {
-  source      = "../../"
+  source      = "git::https://github.com/cloudposse/terraform-aws-jenkins.git?ref=master"
   namespace   = "cp"
   name        = "jenkins"
   stage       = "prod"
@@ -123,7 +123,7 @@ module "jenkins" {
 data "aws_availability_zones" "available" {}
 
 module "jenkins" {
-  source      = "../../"
+  source      = "git::https://github.com/cloudposse/terraform-aws-jenkins.git?ref=master"
   namespace   = "cp"
   name        = "jenkins"
   stage       = "prod"
@@ -203,7 +203,7 @@ module "subnets" {
 data "aws_availability_zones" "available" {}
 
 module "jenkins" {
-  source      = "../../"
+  source      = "git::https://github.com/cloudposse/terraform-aws-jenkins.git?ref=master"
   namespace   = "cp"
   name        = "jenkins"
   stage       = "prod"
