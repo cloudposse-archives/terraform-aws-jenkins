@@ -1,4 +1,4 @@
-# terraform-aws-jenkins
+# terraform-aws-jenkins [![Build Status](https://travis-ci.org/cloudposse/terraform-aws-jenkins.svg)](https://travis-ci.org/cloudposse/terraform-aws-jenkins)
 
 ## Introduction
 
@@ -6,7 +6,6 @@
 and deploy to [Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) running [Docker](https://www.docker.com/).
 
 This is an enterprise-ready, scalable and highly-available architecture and the CI/CD pattern to build and deploy Jenkins.
-
 
 The module uses these open-source Cloud Posse modules:
 
@@ -40,7 +39,7 @@ __CodePipeline__ will:
   * Build a Docker image from it
   * Save the Docker image to the ECR repo
   * Deploy the Docker image from the ECR repo to Elastic Beanstalk running Docker stack
-  * Monitor the GitHub repo for changes and re-run the steps above if new commits are pushed into it
+  * Monitor the GitHub repo for changes and re-run the steps above if new commits are pushed
 
 
 __DataPipeline__ will run on the specified schedule and will backup all Jenkins files to an S3 bucket by doing the following:
@@ -342,7 +341,6 @@ module "subnets" {
 | timeout             | 60 Minutes   | Pipeline execution timeout                                                 | Yes      |
 
 
-
 ## References
 
 * http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_docker_image.html
@@ -425,5 +423,3 @@ or [hire us][hire] to help build your next cloud-platform.
   [erik_web]: https://github.com/osterman/
   [andriy_img]: https://avatars0.githubusercontent.com/u/7356997?v=4&u=ed9ce1c9151d552d985bdf5546772e14ef7ab617&s=144
   [andriy_web]: https://github.com/aknysh/
-
-
