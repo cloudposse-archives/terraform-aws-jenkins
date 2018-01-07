@@ -12,7 +12,7 @@ module "elastic_beanstalk_application" {
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.2.8"
+  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.3.1"
   namespace     = "${var.namespace}"
   name          = "${var.name}"
   stage         = "${var.stage}"
@@ -113,7 +113,7 @@ module "efs_backup" {
 
 # CodePipeline/CodeBuild to build Jenkins Docker image, store it to a ECR repo, and deploy it to Elastic Beanstalk running Docker stack
 module "cicd" {
-  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.4.6"
+  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.5.0"
   namespace           = "${var.namespace}"
   name                = "${var.name}"
   stage               = "${var.stage}"
@@ -139,7 +139,7 @@ module "cicd" {
 
 # Label for EC2 slaves
 module "label_slaves" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.2.2"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.3.1"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
