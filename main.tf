@@ -1,6 +1,6 @@
 # Elastic Beanstalk Application
 module "elastic_beanstalk_application" {
-  source      = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application.git?ref=tags/0.1.3"
+  source      = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application.git?ref=tags/0.1.4"
   namespace   = "${var.namespace}"
   name        = "${var.name}"
   stage       = "${var.stage}"
