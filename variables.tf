@@ -29,7 +29,7 @@ variable "description" {
 # http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html#concepts.platforms.docker
 variable "solution_stack_name" {
   type        = "string"
-  default     = "64bit Amazon Linux 2017.03 v2.7.4 running Docker 17.03.2-ce"
+  default     = "64bit Amazon Linux 2017.09 v2.8.3 running Docker 17.06.2-ce"
   description = "Elastic Beanstalk stack, e.g. Docker, Go, Node, Java, IIS. For more info: http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html"
 }
 
@@ -189,7 +189,7 @@ variable "datapipeline_config" {
   description = "DataPipeline configuration options"
 
   default = {
-    instance_type = "t2.micro"
+    instance_type = "t2.small"
     email         = ""
     period        = "24 hours"
     timeout       = "60 Minutes"
