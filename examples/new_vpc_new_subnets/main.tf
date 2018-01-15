@@ -53,7 +53,6 @@ module "vpc" {
   stage                            = "prod"
   cidr_block                       = "10.0.0.0/16"
   assign_generated_ipv6_cidr_block = "false"
-  attributes                       = ["vpc"]
 
   tags = {
     BusinessUnit = "ABC"
@@ -72,7 +71,6 @@ module "subnets" {
   igw_id              = "${module.vpc.igw_id}"
   cidr_block          = "${module.vpc.vpc_cidr_block}"
   nat_gateway_enabled = "true"
-  attributes          = ["subnet"]
 
   tags = {
     BusinessUnit = "ABC"

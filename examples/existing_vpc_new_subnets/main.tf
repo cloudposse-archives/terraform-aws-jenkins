@@ -57,7 +57,6 @@ module "subnets" {
   igw_id              = "igw-s32321vd"
   cidr_block          = "10.0.0.0/16"
   nat_gateway_enabled = "true"
-  attributes          = ["subnet"]
 
   tags = {
     BusinessUnit = "ABC"
