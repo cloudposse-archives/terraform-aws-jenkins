@@ -61,8 +61,6 @@ For complete examples, see [examples](examples).
 
 ### Deploy Jenkins into an existing VPC with existing subnets
 
-__NOTE__: Use the [Makefile](examples/existing_vpc_existing_subnets/Makefile) to control the creation and deletion of the resources.
-
 ```hcl
 data "aws_availability_zones" "available" {}
 
@@ -111,8 +109,6 @@ module "jenkins" {
 
 ### Deploy Jenkins into an existing VPC and new subnets
 
-__NOTE__: Use the [Makefile](examples/existing_vpc_new_subnets/Makefile) to control the creation and deletion of the resources.
-
 ```hcl
 data "aws_availability_zones" "available" {}
 
@@ -127,12 +123,10 @@ module "jenkins" {
   aws_account_id               = "000111222333"
   aws_region                   = "us-west-2"
   availability_zones           = ["${data.aws_availability_zones.available.names}"]
-  solution_stack_name          = "64bit Amazon Linux 2017.03 v2.7.4 running Docker 17.03.2-ce"
   vpc_id                       = "vpc-a22222ee"
   zone_id                      = "ZXXXXXXXXXXX"
   public_subnets               = "${module.subnets.public_subnet_ids}"
   private_subnets              = "${module.subnets.private_subnet_ids}"
-  loadbalancer_type            = "application"
   loadbalancer_certificate_arn = "XXXXXXXXXXXXXXXXX"
   ssh_key_pair                 = "ssh-key-jenkins"
 
@@ -140,10 +134,6 @@ module "jenkins" {
   github_organization = "cloudposse"
   github_repo_name    = "jenkins"
   github_branch       = "master"
-
-  build_image        = "aws/codebuild/docker:1.12.1"
-  build_compute_type = "BUILD_GENERAL1_SMALL"
-  image_tag          = "latest"
 
   datapipeline_config = {
     instance_type = "t2.medium"
@@ -157,9 +147,6 @@ module "jenkins" {
     JENKINS_PASS          = "123456"
     JENKINS_NUM_EXECUTORS = 4
   }
-
-  delimiter  = "-"
-  attributes = []
 
   tags = {
     BusinessUnit = "ABC"
@@ -178,7 +165,6 @@ module "subnets" {
   igw_id              = "igw-s32321vd"
   cidr_block          = "10.0.0.0/16"
   nat_gateway_enabled = "true"
-  attributes          = ["subnet"]
 
   tags = {
     BusinessUnit = "ABC"
@@ -188,8 +174,6 @@ module "subnets" {
 ```
 
 ### Deploy Jenkins into a new VPC and new subnets
-
-__NOTE__: Use the [Makefile](examples/new_vpc_new_subnets/Makefile) to control the creation and deletion of the resources.
 
 ```hcl
 data "aws_availability_zones" "available" {}
@@ -242,7 +226,7 @@ module "vpc" {
   name                             = "jenkins"
   stage                            = "prod"
   cidr_block                       = "10.0.0.0/16"
-  assign_generated_ipv6_cidr_block = "false"
+  assign_generated_ipv6_cidr_block = "true"
 
   tags = {
     BusinessUnit = "ABC"
