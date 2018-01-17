@@ -63,7 +63,7 @@ module "elastic_beanstalk_environment" {
 
 # Elastic Container Registry Docker Repository
 module "ecr" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-ecr.git?ref=tags/0.2.2"
+  source     = "git::https://github.com/cloudposse/terraform-aws-ecr.git?ref=tags/0.2.3"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
@@ -94,7 +94,7 @@ module "efs" {
 
 # EFS backup to S3
 module "efs_backup" {
-  source                             = "git::https://github.com/cloudposse/terraform-aws-efs-backup.git?ref=tags/0.3.9"
+  source                             = "git::https://github.com/cloudposse/terraform-aws-efs-backup.git?ref=tags/0.4.0"
   name                               = "${var.name}"
   stage                              = "${var.stage}"
   namespace                          = "${var.namespace}"
