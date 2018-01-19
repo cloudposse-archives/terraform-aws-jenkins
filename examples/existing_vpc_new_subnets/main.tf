@@ -2,6 +2,10 @@ provider "aws" {
   region = "us-west-2"
 }
 
+variable "max_availability_zones" {
+  default = "2"
+}
+
 data "aws_availability_zones" "available" {}
 
 module "jenkins" {
@@ -14,7 +18,7 @@ module "jenkins" {
   master_instance_type         = "t2.medium"
   aws_account_id               = "000111222333"
   aws_region                   = "us-west-2"
-  availability_zones           = ["${data.aws_availability_zones.available.names}"]
+  availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
   vpc_id                       = "vpc-a22222ee"
   zone_id                      = "ZXXXXXXXXXXX"
   public_subnets               = "${module.subnets.public_subnet_ids}"
@@ -48,7 +52,7 @@ module "jenkins" {
 
 module "subnets" {
   source              = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
-  availability_zones  = ["${data.aws_availability_zones.available.names}"]
+  availability_zones  = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
   namespace           = "cp"
   name                = "jenkins"
   stage               = "prod"
