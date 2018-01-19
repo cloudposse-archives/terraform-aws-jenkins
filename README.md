@@ -62,6 +62,10 @@ For complete examples, see [examples](examples).
 ### Deploy Jenkins into an existing VPC with existing subnets
 
 ```hcl
+variable "max_availability_zones" {
+  default = "2"
+}
+
 data "aws_availability_zones" "available" {}
 
 module "jenkins" {
@@ -74,7 +78,7 @@ module "jenkins" {
   master_instance_type         = "t2.medium"
   aws_account_id               = "000111222333"
   aws_region                   = "us-west-2"
-  availability_zones           = ["${data.aws_availability_zones.available.names}"]
+  availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
   vpc_id                       = "vpc-a22222ee"
   zone_id                      = "ZXXXXXXXXXXX"
   public_subnets               = ["subnet-e63f82cb", "subnet-e66f44ab", "subnet-e88f42bd"]
@@ -110,6 +114,10 @@ module "jenkins" {
 ### Deploy Jenkins into an existing VPC and new subnets
 
 ```hcl
+variable "max_availability_zones" {
+  default = "2"
+}
+
 data "aws_availability_zones" "available" {}
 
 module "jenkins" {
@@ -122,7 +130,7 @@ module "jenkins" {
   master_instance_type         = "t2.medium"
   aws_account_id               = "000111222333"
   aws_region                   = "us-west-2"
-  availability_zones           = ["${data.aws_availability_zones.available.names}"]
+  availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
   vpc_id                       = "vpc-a22222ee"
   zone_id                      = "ZXXXXXXXXXXX"
   public_subnets               = "${module.subnets.public_subnet_ids}"
@@ -156,7 +164,7 @@ module "jenkins" {
 
 module "subnets" {
   source              = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
-  availability_zones  = ["${data.aws_availability_zones.available.names}"]
+  availability_zones  = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
   namespace           = "cp"
   name                = "jenkins"
   stage               = "prod"
@@ -176,6 +184,10 @@ module "subnets" {
 ### Deploy Jenkins into a new VPC and new subnets
 
 ```hcl
+variable "max_availability_zones" {
+  default = "2"
+}
+
 data "aws_availability_zones" "available" {}
 
 module "jenkins" {
@@ -188,7 +200,7 @@ module "jenkins" {
   master_instance_type         = "t2.medium"
   aws_account_id               = "000111222333"
   aws_region                   = "us-west-2"
-  availability_zones           = ["${data.aws_availability_zones.available.names}"]
+  availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
   vpc_id                       = "${module.vpc.vpc_id}"
   zone_id                      = "ZXXXXXXXXXXX"
   public_subnets               = "${module.subnets.public_subnet_ids}"
@@ -236,7 +248,7 @@ module "vpc" {
 
 module "subnets" {
   source              = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
-  availability_zones  = ["${data.aws_availability_zones.available.names}"]
+  availability_zones  = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
   namespace           = "cp"
   name                = "jenkins"
   stage               = "prod"
