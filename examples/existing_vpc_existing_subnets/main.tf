@@ -2,7 +2,7 @@ provider "aws" {
   region = "us-west-2"
 }
 
-variable "azs_to_deploy" {
+variable "max_availability_zones" {
   default = "2"
 }
 
@@ -18,7 +18,7 @@ module "jenkins" {
   master_instance_type         = "t2.medium"
   aws_account_id               = "000111222333"
   aws_region                   = "us-west-2"
-  availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.azs_to_deploy)}"]
+  availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
   vpc_id                       = "vpc-a22222ee"
   zone_id                      = "ZXXXXXXXXXXX"
   public_subnets               = ["subnet-e63f82cb", "subnet-e66f44ab", "subnet-e88f42bd"]
