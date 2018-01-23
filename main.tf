@@ -12,7 +12,7 @@ module "elastic_beanstalk_application" {
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.3.3"
+  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.3.4"
   namespace     = "${var.namespace}"
   name          = "${var.name}"
   stage         = "${var.stage}"
@@ -154,13 +154,15 @@ resource "aws_security_group" "slaves" {
   description = "Security Group for Jenkins EC2 slaves"
   vpc_id      = "${var.vpc_id}"
 
+  # Allow the provided Security Groups to connect to Jenkins slave instances
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port       = 0
+    to_port         = 0
+    protocol        = -1
+    security_groups = ["${var.security_groups}"]
   }
 
+  # Allow Jenkins master instance to communicate with Jenkins slave instances on SSH port 22
   ingress {
     from_port       = 22
     to_port         = 22
