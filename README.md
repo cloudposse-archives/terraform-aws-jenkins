@@ -275,7 +275,7 @@ module "subnets" {
 | name                               | jenkins                        | Name of the application                                                                                                              | Yes      |
 | description                        |                                | Used as Elastic Beanstalk application description                                                                                    | Yes      |
 | aws_region                         | us-west-2                      | AWS Region to provision all the AWS resources in                                                                                     | Yes      |
-| solution_stack_name                | 64bit Amazon Linux 2017.09 v2.8.3 running Docker 17.06.2-ce | Elastic Beanstalk stack                                                                                 | Yes      |
+| solution_stack_name                | 64bit Amazon Linux 2017.09 v2.8.4 running Docker 17.09.1-ce | Elastic Beanstalk stack                                                                                 | Yes      |
 | master_instance_type               | t2.medium                      | EC2 instance type for Jenkins master                                                                                                 | Yes      |
 | vpc_id                             |                                | AWS VPC ID where module should operate (_e.g._ `vpc-a22222ee`)                                                                       | Yes      |
 | availability_zones                 |                                | List of Availability Zones for EFS                                                                                                   | Yes      |
