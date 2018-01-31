@@ -113,7 +113,7 @@ module "efs_backup" {
 
 # CodePipeline/CodeBuild to build Jenkins Docker image, store it to a ECR repo, and deploy it to Elastic Beanstalk running Docker stack
 module "cicd" {
-  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.5.1"
+  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.5.2"
   namespace           = "${var.namespace}"
   name                = "${var.name}"
   stage               = "${var.stage}"
