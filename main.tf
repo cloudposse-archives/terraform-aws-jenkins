@@ -63,7 +63,7 @@ module "elastic_beanstalk_environment" {
 
 # Elastic Container Registry Docker Repository
 module "ecr" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-ecr.git?ref=tags/0.2.3"
+  source     = "git::https://github.com/cloudposse/terraform-aws-ecr.git?ref=tags/0.2.4"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
