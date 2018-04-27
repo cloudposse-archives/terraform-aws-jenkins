@@ -51,12 +51,11 @@ module "jenkins" {
 }
 
 module "vpc" {
-  source                           = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=master"
-  namespace                        = "cp"
-  name                             = "jenkins"
-  stage                            = "prod"
-  cidr_block                       = "10.0.0.0/16"
-  assign_generated_ipv6_cidr_block = "true"
+  source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=master"
+  namespace  = "cp"
+  name       = "jenkins"
+  stage      = "prod"
+  cidr_block = "10.0.0.0/16"
 
   tags = {
     BusinessUnit = "ABC"
