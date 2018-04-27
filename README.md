@@ -1,4 +1,4 @@
-# terraform-aws-jenkins [![Build Status](https://travis-ci.org/cloudposse/terraform-aws-jenkins.svg)](https://travis-ci.org/cloudposse/terraform-aws-jenkins)
+# terraform-aws-jenkins [![Build Status](https://travis-ci.org/cloudposse/terraform-aws-jenkins.svg?branch=master)](https://travis-ci.org/cloudposse/terraform-aws-jenkins)
 
 ## Introduction
 
@@ -377,17 +377,22 @@ See [LICENSE](LICENSE) for full details.
 
 `terraform-aws-jenkins` is maintained and funded by [Cloud Posse, LLC][website]. Like it? Please let us know at <hello@cloudposse.com>
 
+![Cloud Posse](https://cloudposse.com/logo-300x69.png)
+
+
+Like it? Please let us know at <hello@cloudposse.com>
+
 We love [Open Source Software](https://github.com/cloudposse/)!
 
 See [our other projects][community]
-or [hire us][hire] to help build your next cloud-platform.
+or [hire us][hire] to help build your next cloud platform.
 
-  [website]: http://cloudposse.com/
+  [website]: https://cloudposse.com/
   [community]: https://github.com/cloudposse/
-  [hire]: http://cloudposse.com/contact/
+  [hire]: https://cloudposse.com/contact/
 
-### Contributors
 
+## Contributors
 
 | [![Erik Osterman][erik_img]][erik_web]<br/>[Erik Osterman][erik_web] | [![Andriy Knysh][andriy_img]][andriy_web]<br/>[Andriy Knysh][andriy_web] |
 |-------------------------------------------------------|------------------------------------------------------------------|
