@@ -441,11 +441,17 @@ Check out [our other projects][github], [apply for a job][jobs], or [hire us][hi
 |  [![Andriy Knysh][aknysh_avatar]](aknysh_homepage)<br/>[Andriy Knysh][aknysh_homepage] | [![Ivan Pinatti][ivan-pinatti_avatar]](ivan-pinatti_homepage)<br/>[Ivan Pinatti][ivan-pinatti_homepage] | [![Sergey Vasilyev][s2504s_avatar]](s2504s_homepage)<br/>[Sergey Vasilyev][s2504s_homepage] |
 |---|---|---|
 
+
   [aknysh_homepage]: https://github.com/aknysh
-  [aknysh_avatar]: https://avatars0.githubusercontent.com/u/7356997?v=4&u=ed9ce1c9151d552d985bdf5546772e14ef7ab617&s=144
+  [aknysh_avatar]: https://github.com/aknysh.png?size=150
+
+
   [ivan-pinatti_homepage]: https://github.com/ivan-pinatti
-  [ivan-pinatti_avatar]: https://avatars0.githubusercontent.com/u/7431771?s=460&v=4
+  [ivan-pinatti_avatar]: https://github.com/ivan-pinatti.png?size=150
+
+
   [s2504s_homepage]: https://github.com/s2504s
-  [s2504s_avatar]: https://avatars0.githubusercontent.com/u/1134449?s=460&v=4
+  [s2504s_avatar]: https://github.com/s2504s.png?size=150
+
 
 
