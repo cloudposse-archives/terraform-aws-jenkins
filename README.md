@@ -444,6 +444,7 @@ Check out [our other projects][github], [apply for a job][jobs], or [hire us][hi
 |  [![Andriy Knysh][aknysh_avatar]](aknysh_homepage)<br/>[Andriy Knysh][aknysh_homepage] | [![Ivan Pinatti][ivan-pinatti_avatar]](ivan-pinatti_homepage)<br/>[Ivan Pinatti][ivan-pinatti_homepage] | [![Sergey Vasilyev][s2504s_avatar]](s2504s_homepage)<br/>[Sergey Vasilyev][s2504s_homepage] |
 |---|---|---|
 
+
   [aknysh_homepage]: https://github.com/aknysh
   [aknysh_avatar]: https://github.com/aknysh.png?size=150
   [ivan-pinatti_homepage]: https://github.com/ivan-pinatti
