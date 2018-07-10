@@ -1,0 +1,323 @@
+---
+#
+# This is the canonical configuration for the `README.md`
+# Run `make readme` to rebuild the `README.md`
+#
+
+# Name of this project
+name: terraform-aws-jenkins
+
+# Logo for this project
+#logo: docs/logo.png
+
+# License of this project
+license: "APACHE2"
+
+# Canonical GitHub repo
+github_repo: cloudposse/terraform-aws-jenkins
+
+# Badges to display
+badges:
+  - name: "Build Status"
+    image: "https://travis-ci.org/cloudposse/terraform-aws-jenkins.svg?branch=master"
+    url: "https://travis-ci.org/cloudposse/terraform-aws-jenkins"
+  - name: "Latest Release"
+    image: "https://img.shields.io/github/release/cloudposse/terraform-aws-jenkins.svg"
+    url: "https://github.com/cloudposse/terraform-aws-jenkins/releases/latest"
+  - name: "Slack Community"
+    image: "https://slack.cloudposse.com/badge.svg"
+    url: "https://slack.cloudposse.com"
+
+related:
+  - name: "terraform-aws-elastic-beanstalk-applicationl"
+    description: "Terraform module to provision AWS Elastic Beanstalk application"
+    url: "https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application"
+  - name: "terraform-aws-elastic-beanstalk-environment"
+    description: "Terraform module to provision AWS Elastic Beanstalk environment"
+    url: "https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment"
+  - name: "terraform-aws-ecr"
+    description: "Terraform Module to manage Docker Container Registries on AWS ECR"
+    url: "https://github.com/cloudposse/terraform-aws-ecr"
+  - name: "terraform-aws-efs"
+    description: "Terraform Module to define an EFS Filesystem (aka NFS)"
+    url: "https://github.com/cloudposse/terraform-aws-efs"
+  - name: "terraform-aws-efs-backup"
+    description: "Terraform module designed to easily backup EFS filesystems to S3 using DataPipeline"
+    url: "https://github.com/cloudposse/terraform-aws-efs-backup"
+  - name: "terraform-aws-cicd"
+    description: "Terraform Module for CI/CD with AWS Code Pipeline and Code Build"
+    url: "https://github.com/cloudposse/terraform-aws-cicd"
+  - name: "terraform-aws-codebuild"
+    description: "Terraform Module to easily leverage AWS CodeBuild for Continuous Integration"
+    url: "https://github.com/cloudposse/terraform-aws-codebuild"
+
+# Short description of this project
+description: |-
+  `terraform-aws-jenkins` is a Terraform module to build a Docker image with [Jenkins](https://jenkins.io/), save it to an [ECR](https://aws.amazon.com/ecr/) repo,
+  and deploy to [Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) running [Docker](https://www.docker.com/).
+
+  This is an enterprise-ready, scalable and highly-available architecture and the CI/CD pattern to build and deploy Jenkins.
+  ## Features
+
+  The module will create the following AWS resources:
+
+     * Elastic Beanstalk Application
+     * Elastic Beanstalk Environment with Docker stack to run the Jenkins master
+     * ECR repository to store the Jenkins Docker image
+     * EFS filesystem to store Jenkins config and jobs (it will be mounted to a directory on the EC2 host, and then to the Docker container)
+     * CodePipeline with CodeBuild to build and deploy Jenkins so even Jenkins itself follows the CI/CD pattern
+     * CloudFormation stack to run a DataPipeline to automatically backup the EFS to S3
+     * CloudFormation stack for SNS notifications about the status of each backup
+
+
+  After all of the AWS resources are created,
+
+  __CodePipeline__ will:
+
+    * Get the specified Jenkins repo from GitHub, _e.g._ https://github.com/cloudposse/jenkins
+    * Build a Docker image from it
+    * Save the Docker image to the ECR repo
+    * Deploy the Docker image from the ECR repo to Elastic Beanstalk running Docker stack
+    * Monitor the GitHub repo for changes and re-run the steps above if new commits are pushed
+
+
+  __DataPipeline__ will run on the specified schedule and will backup all Jenkins files to an S3 bucket by doing the following:
+
+    * Spawn an EC2 instance
+    * Mount the EFS filesystem to a directory on the EC2 instance
+    * Backup the directory to an S3 bucket
+    * Notify about the status of the backup (Success or Failure) via email
+    * Destroy the EC2 instance
+
+
+  ![jenkins build server architecture](https://user-images.githubusercontent.com/52489/30888694-d07d68c8-a2d6-11e7-90b2-d8275ef94f39.png)
+
+# How to use this project
+usage: |-
+  For complete examples, see [examples](examples).
+
+# Example usage
+
+examples: |-
+  ### Deploy Jenkins into an existing VPC with existing subnets
+
+  ```hcl
+  variable "max_availability_zones" {
+    default = "2"
+  }
+
+  data "aws_availability_zones" "available" {}
+
+  module "jenkins" {
+    source      = "git::https://github.com/cloudposse/terraform-aws-jenkins.git?ref=master"
+    namespace   = "cp"
+    name        = "jenkins"
+    stage       = "prod"
+    description = "Jenkins server as Docker container running on Elastic Beanstalk"
+
+    master_instance_type         = "t2.medium"
+    aws_account_id               = "000111222333"
+    aws_region                   = "us-west-2"
+    availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
+    vpc_id                       = "vpc-a22222ee"
+    zone_id                      = "ZXXXXXXXXXXX"
+    public_subnets               = ["subnet-e63f82cb", "subnet-e66f44ab", "subnet-e88f42bd"]
+    private_subnets              = ["subnet-e99d23eb", "subnet-e77e12bb", "subnet-e58a52bc"]
+    loadbalancer_certificate_arn = "XXXXXXXXXXXXXXXXX"
+    ssh_key_pair                 = "ssh-key-jenkins"
+
+    github_oauth_token  = ""
+    github_organization = "cloudposse"
+    github_repo_name    = "jenkins"
+    github_branch       = "master"
+
+    datapipeline_config = {
+      instance_type = "t2.medium"
+      email         = "me@mycompany.com"
+      period        = "12 hours"
+      timeout       = "60 Minutes"
+    }
+
+    env_vars = {
+      JENKINS_USER          = "admin"
+      JENKINS_PASS          = "123456"
+      JENKINS_NUM_EXECUTORS = 4
+    }
+
+    tags = {
+      BusinessUnit = "ABC"
+      Department   = "XYZ"
+    }
+  }
+  ```
+
+  ### Deploy Jenkins into an existing VPC and new subnets
+
+  ```hcl
+  variable "max_availability_zones" {
+    default = "2"
+  }
+
+  data "aws_availability_zones" "available" {}
+
+  module "jenkins" {
+    source      = "git::https://github.com/cloudposse/terraform-aws-jenkins.git?ref=master"
+    namespace   = "cp"
+    name        = "jenkins"
+    stage       = "prod"
+    description = "Jenkins server as Docker container running on Elastic Beanstalk"
+
+    master_instance_type         = "t2.medium"
+    aws_account_id               = "000111222333"
+    aws_region                   = "us-west-2"
+    availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
+    vpc_id                       = "vpc-a22222ee"
+    zone_id                      = "ZXXXXXXXXXXX"
+    public_subnets               = "${module.subnets.public_subnet_ids}"
+    private_subnets              = "${module.subnets.private_subnet_ids}"
+    loadbalancer_certificate_arn = "XXXXXXXXXXXXXXXXX"
+    ssh_key_pair                 = "ssh-key-jenkins"
+
+    github_oauth_token  = ""
+    github_organization = "cloudposse"
+    github_repo_name    = "jenkins"
+    github_branch       = "master"
+
+    datapipeline_config = {
+      instance_type = "t2.medium"
+      email         = "me@mycompany.com"
+      period        = "12 hours"
+      timeout       = "60 Minutes"
+    }
+
+    env_vars = {
+      JENKINS_USER          = "admin"
+      JENKINS_PASS          = "123456"
+      JENKINS_NUM_EXECUTORS = 4
+    }
+
+    tags = {
+      BusinessUnit = "ABC"
+      Department   = "XYZ"
+    }
+  }
+
+  module "subnets" {
+    source              = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
+    availability_zones  = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
+    namespace           = "cp"
+    name                = "jenkins"
+    stage               = "prod"
+    region              = "us-west-2"
+    vpc_id              = "vpc-a22222ee"
+    igw_id              = "igw-s32321vd"
+    cidr_block          = "10.0.0.0/16"
+    nat_gateway_enabled = "true"
+
+    tags = {
+      BusinessUnit = "ABC"
+      Department   = "XYZ"
+    }
+  }
+  ```
+
+  ### Deploy Jenkins into a new VPC and new subnets
+
+  ```hcl
+  variable "max_availability_zones" {
+    default = "2"
+  }
+
+  data "aws_availability_zones" "available" {}
+
+  module "jenkins" {
+    source      = "git::https://github.com/cloudposse/terraform-aws-jenkins.git?ref=master"
+    namespace   = "cp"
+    name        = "jenkins"
+    stage       = "prod"
+    description = "Jenkins server as Docker container running on Elastic Beanstalk"
+
+    master_instance_type         = "t2.medium"
+    aws_account_id               = "000111222333"
+    aws_region                   = "us-west-2"
+    availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
+    vpc_id                       = "${module.vpc.vpc_id}"
+    zone_id                      = "ZXXXXXXXXXXX"
+    public_subnets               = "${module.subnets.public_subnet_ids}"
+    private_subnets              = "${module.subnets.private_subnet_ids}"
+    loadbalancer_certificate_arn = "XXXXXXXXXXXXXXXXX"
+    ssh_key_pair                 = "ssh-key-jenkins"
+
+    github_oauth_token  = ""
+    github_organization = "cloudposse"
+    github_repo_name    = "jenkins"
+    github_branch       = "master"
+
+    datapipeline_config = {
+      instance_type = "t2.medium"
+      email         = "me@mycompany.com"
+      period        = "12 hours"
+      timeout       = "60 Minutes"
+    }
+
+    env_vars = {
+      JENKINS_USER          = "admin"
+      JENKINS_PASS          = "123456"
+      JENKINS_NUM_EXECUTORS = 4
+    }
+
+    tags = {
+      BusinessUnit = "ABC"
+      Department   = "XYZ"
+    }
+  }
+
+  module "vpc" {
+    source                           = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=master"
+    namespace                        = "cp"
+    name                             = "jenkins"
+    stage                            = "prod"
+    cidr_block                       = "10.0.0.0/16"
+
+    tags = {
+      BusinessUnit = "ABC"
+      Department   = "XYZ"
+    }
+  }
+
+  module "subnets" {
+    source              = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
+    availability_zones  = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
+    namespace           = "cp"
+    name                = "jenkins"
+    stage               = "prod"
+    region              = "us-west-2"
+    vpc_id              = "${module.vpc.vpc_id}"
+    igw_id              = "${module.vpc.igw_id}"
+    cidr_block          = "${module.vpc.vpc_cidr_block}"
+    nat_gateway_enabled = "true"
+
+    tags = {
+      BusinessUnit = "ABC"
+      Department   = "XYZ"
+    }
+  }
+  ```
+
+# How to get started quickly
+#quickstart: |-
+#  Here's how to get started...
+
+# Other files to include in this README from the project folder
+include:
+  - "docs/targets.md"
+  - "docs/terraform.md"
+
+# Contributors to this project
+contributors:
+  - name: "Andriy Knysh"
+    github: "aknysh"
+  - name: "Ivan Pinatti"
+    github: "ivan-pinatti"
+  - name: "Sergey Vasilyev"
+    github: "s2504s"
