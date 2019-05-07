@@ -1,6 +1,6 @@
 # Elastic Beanstalk Application
 module "elastic_beanstalk_application" {
-  source      = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application.git?ref=tags/0.1.4"
+  source      = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application.git?ref=tags/0.1.6"
   namespace   = "${var.namespace}"
   name        = "${var.name}"
   stage       = "${var.stage}"
@@ -12,7 +12,7 @@ module "elastic_beanstalk_application" {
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.3.4"
+  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.11.0"
   namespace     = "${var.namespace}"
   name          = "${var.name}"
   stage         = "${var.stage}"
@@ -63,7 +63,7 @@ module "elastic_beanstalk_environment" {
 
 # Elastic Container Registry Docker Repository
 module "ecr" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-ecr.git?ref=tags/0.2.4"
+  source     = "git::https://github.com/cloudposse/terraform-aws-ecr.git?ref=tags/0.6.0"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
@@ -74,7 +74,7 @@ module "ecr" {
 
 # EFS to store Jenkins state (settings, jobs, etc.)
 module "efs" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.3.3"
+  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.9.0"
   namespace          = "${var.namespace}"
   name               = "${var.name}"
   stage              = "${var.stage}"
@@ -94,7 +94,7 @@ module "efs" {
 
 # EFS backup to S3
 module "efs_backup" {
-  source                             = "git::https://github.com/cloudposse/terraform-aws-efs-backup.git?ref=tags/0.5.0"
+  source                             = "git::https://github.com/cloudposse/terraform-aws-efs-backup.git?ref=tags/0.9.0"
   name                               = "${var.name}"
   stage                              = "${var.stage}"
   namespace                          = "${var.namespace}"
@@ -113,7 +113,7 @@ module "efs_backup" {
 
 # CodePipeline/CodeBuild to build Jenkins Docker image, store it to a ECR repo, and deploy it to Elastic Beanstalk running Docker stack
 module "cicd" {
-  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.5.2"
+  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.6.0"
   namespace           = "${var.namespace}"
   name                = "${var.name}"
   stage               = "${var.stage}"
@@ -139,7 +139,7 @@ module "cicd" {
 
 # Label for EC2 slaves
 module "label_slaves" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.3.1"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.7.0"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
