@@ -35,6 +35,7 @@ module "elastic_beanstalk_environment" {
   healthcheck_url              = "${var.healthcheck_url}"
   loadbalancer_type            = "${var.loadbalancer_type}"
   loadbalancer_certificate_arn = "${var.loadbalancer_certificate_arn}"
+  loadbalancer_ssl_policy      = "${var.loadbalancer_ssl_policy}"
   vpc_id                       = "${var.vpc_id}"
   public_subnets               = "${var.public_subnets}"
   private_subnets              = "${var.private_subnets}"

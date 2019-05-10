@@ -66,6 +66,12 @@ variable "loadbalancer_certificate_arn" {
   description = "Load Balancer SSL certificate ARN. The certificate must be present in AWS Certificate Manager"
 }
 
+variable "loadbalancer_ssl_policy" {
+  type        = "string"
+  default     = "ELBSecurityPolicy-2016-08"
+  description = "Load Balancer SSL Security Policy"
+}
+
 variable "public_subnets" {
   type        = "list"
   description = "List of public subnets to place Elastic Load Balancer"
