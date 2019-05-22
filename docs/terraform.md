@@ -1,4 +1,3 @@
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -22,6 +21,7 @@
 | healthcheck_url | Application Health Check URL. Elastic Beanstalk will call this URL to check the health of the application running on EC2 instances | string | `/login` | no |
 | image_tag | Docker image tag in the ECR repository, e.g. 'latest'. Used as CodeBuild ENV variable $IMAGE_TAG when building Docker images. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker.html | string | `latest` | no |
 | loadbalancer_certificate_arn | Load Balancer SSL certificate ARN. The certificate must be present in AWS Certificate Manager | string | - | yes |
+| loadbalancer_ssl_policy | Load Balancer SSL Security Policy | string | `ELBSecurityPolicy-2016-08` | no |
 | loadbalancer_type | Load Balancer type, e.g. 'application' or 'classic' | string | `application` | no |
 | master_instance_type | EC2 instance type for Jenkins master, e.g. 't2.medium' | string | `t2.medium` | no |
 | name | Solution name, e.g. 'app' or 'jenkins' | string | `jenkins` | no |
@@ -34,7 +34,7 @@
 | ssh_key_pair | Name of SSH key that will be deployed on Elastic Beanstalk and DataPipeline instance. The key should be present in AWS | string | `` | no |
 | stage | Stage, e.g. 'prod', 'staging', 'dev', or 'test' | string | - | yes |
 | tags | Additional tags (e.g. `map('BusinessUnit`,`XYZ`) | map | `<map>` | no |
-| use_efs_ip_address |  | string | `false` | no |
+| use_efs_ip_address | - | string | `false` | no |
 | vpc_id | ID of the VPC in which to provision the AWS resources | string | - | yes |
 | zone_id | Route53 parent zone ID. The module will create sub-domain DNS records in the parent zone for the EB environment and EFS | string | - | yes |
 
