@@ -1,4 +1,3 @@
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -34,7 +33,7 @@
 | ssh_key_pair | Name of SSH key that will be deployed on Elastic Beanstalk and DataPipeline instance. The key should be present in AWS | string | `` | no |
 | stage | Stage, e.g. 'prod', 'staging', 'dev', or 'test' | string | - | yes |
 | tags | Additional tags (e.g. `map('BusinessUnit`,`XYZ`) | map | `<map>` | no |
-| use_efs_ip_address |  | string | `false` | no |
+| use_efs_ip_address | - | string | `false` | no |
 | vpc_id | ID of the VPC in which to provision the AWS resources | string | - | yes |
 | zone_id | Route53 parent zone ID. The module will create sub-domain DNS records in the parent zone for the EB environment and EFS | string | - | yes |
 
