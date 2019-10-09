@@ -38,9 +38,9 @@ github_repo: cloudposse/terraform-aws-jenkins
 
 # Badges to display
 badges:
-  - name: "Build Status"
-    image: "https://travis-ci.org/cloudposse/terraform-aws-jenkins.svg?branch=master"
-    url: "https://travis-ci.org/cloudposse/terraform-aws-jenkins"
+  - name: "Codefresh Build Status"
+    image: "https://g.codefresh.io/api/badges/pipeline/cloudposse/terraform-modules%2Fterraform-aws-jenkins?type=cf-1"
+    url: "https://g.codefresh.io/public/accounts/cloudposse/pipelines/5d9c0dd46d867eabdb30d36e"
   - name: "Latest Release"
     image: "https://img.shields.io/github/release/cloudposse/terraform-aws-jenkins.svg"
     url: "https://github.com/cloudposse/terraform-aws-jenkins/releases/latest"
@@ -335,9 +335,18 @@ include:
 
 # Contributors to this project
 contributors:
+  - name: "Erik Osterman"
+    homepage: "https://github.com/osterman"
+    github: "osterman"
   - name: "Andriy Knysh"
+    homepage: "https://github.com/aknysh/"
     github: "aknysh"
+  - name: "Igor Rodionov"
+    homepage: "https://github.com/goruha/"
+    github: "goruha"
   - name: "Ivan Pinatti"
+    homepage: "https://github.com/ivan-pinatti/"
     github: "ivan-pinatti"
   - name: "Sergey Vasilyev"
+    homepage: "https://github.com/s2504s/"
     github: "s2504s"

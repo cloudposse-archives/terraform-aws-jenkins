@@ -1,32 +1,29 @@
 variable "region" {
   type        = string
-  description = "AWS region"
-}
-
-variable "availability_zones" {
-  type        = list(string)
-  description = "List of availability zones"
+  description = "AWS region in which to provision the AWS resources"
 }
 
 variable "namespace" {
   type        = string
   description = "Namespace, which could be your organization name, e.g. 'eg' or 'cp'"
+  default     = ""
 }
 
 variable "stage" {
   type        = string
   description = "Stage, e.g. 'prod', 'staging', 'dev', or 'test'"
+  default     = ""
 }
 
 variable "name" {
   type        = string
-  description = "Solution name, e.g. 'app' or 'cluster'"
+  description = "Solution name, e.g. 'app' or 'jenkins'"
 }
 
 variable "delimiter" {
   type        = string
   default     = "-"
-  description = "Delimiter to be used between `name`, `namespace`, `stage`, etc."
+  description = "Delimiter to be used between `namespace`, `stage`, `name` and `attributes`"
 }
 
 variable "attributes" {
@@ -43,156 +40,165 @@ variable "tags" {
 
 variable "description" {
   type        = string
-  description = "Short description of the Environment"
+  default     = "Jenkins server as Docker container running on Elastic Benastalk"
+  description = "Will be used as Elastic Beanstalk application description"
 }
 
-variable "environment_type" {
-  type        = string
-  description = "Environment type, e.g. 'LoadBalanced' or 'SingleInstance'.  If setting to 'SingleInstance', `rolling_update_type` must be set to 'Time', `updating_min_in_service` must be set to 0, and `loadbalancer_subnets` will be unused (it applies to the ELB, which does not exist in SingleInstance environments)"
-}
-
-variable "loadbalancer_type" {
-  type        = string
-  description = "Load Balancer type, e.g. 'application' or 'classic'"
-}
-
-variable "dns_zone_id" {
-  type        = string
-  description = "Route53 parent zone ID. The module will create sub-domain DNS record in the parent zone for the EB environment"
-}
-
-variable "availability_zone_selector" {
-  type        = string
-  description = "Availability Zone selector"
-}
-
-variable "instance_type" {
-  type        = string
-  description = "Instances type"
-}
-
-variable "autoscale_min" {
-  type        = number
-  description = "Minumum instances to launch"
-}
-
-variable "autoscale_max" {
-  type        = number
-  description = "Maximum instances to launch"
-}
-
+// https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html
+// https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html#platforms-supported.docker
 variable "solution_stack_name" {
   type        = string
-  description = "Elastic Beanstalk stack, e.g. Docker, Go, Node, Java, IIS. For more info, see https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html"
+  default     = "64bit Amazon Linux 2018.03 v2.12.17 running Docker 18.06.1-ce"
+  description = "Elastic Beanstalk stack, e.g. Docker, Go, Node, Java, IIS. For more info: http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html"
 }
 
-variable "wait_for_ready_timeout" {
+variable "master_instance_type" {
   type        = string
-  description = "The maximum duration to wait for the Elastic Beanstalk Environment to be in a ready state before timing out"
+  default     = "t2.medium"
+  description = "EC2 instance type for Jenkins master, e.g. 't2.medium'"
 }
 
-variable "tier" {
+variable "vpc_id" {
   type        = string
-  description = "Elastic Beanstalk Environment tier, e.g. 'WebServer' or 'Worker'"
+  description = "ID of the VPC in which to provision the AWS resources"
 }
 
-variable "version_label" {
-  type        = string
-  description = "Elastic Beanstalk Application version to deploy"
-}
-
-variable "force_destroy" {
-  type        = bool
-  description = "Force destroy the S3 bucket for load balancer logs"
-}
-
-variable "rolling_update_enabled" {
-  type        = bool
-  description = "Whether to enable rolling update"
-}
-
-variable "rolling_update_type" {
-  type        = string
-  description = "`Health` or `Immutable`. Set it to `Immutable` to apply the configuration change to a fresh group of instances"
-}
-
-variable "updating_min_in_service" {
-  type        = number
-  description = "Minimum number of instances in service during update"
-}
-
-variable "updating_max_batch" {
-  type        = number
-  description = "Maximum number of instances to update at once"
+variable "availability_zones" {
+  type        = list(string)
+  description = "List of Availability Zones for EFS"
 }
 
 variable "healthcheck_url" {
   type        = string
+  default     = "/login"
   description = "Application Health Check URL. Elastic Beanstalk will call this URL to check the health of the application running on EC2 instances"
 }
 
-variable "application_port" {
-  type        = number
-  description = "Port application is listening on"
-}
-
-variable "root_volume_size" {
-  type        = number
-  description = "The size of the EBS root volume"
-}
-
-variable "root_volume_type" {
+variable "loadbalancer_type" {
   type        = string
-  description = "The type of the EBS root volume"
+  default     = "application"
+  description = "Load Balancer type, e.g. 'application' or 'classic'"
 }
 
-variable "autoscale_measure_name" {
+variable "loadbalancer_certificate_arn" {
   type        = string
-  description = "Metric used for your Auto Scaling trigger"
+  description = "Load Balancer SSL certificate ARN. The certificate must be present in AWS Certificate Manager"
 }
 
-variable "autoscale_statistic" {
+variable "loadbalancer_subnets" {
+  type        = list(string)
+  description = "List of subnets to place Elastic Load Balancer"
+}
+
+variable "application_subnets" {
+  type        = list(string)
+  description = "List of subnets to place EC2 instances and EFS"
+}
+
+variable "dns_zone_id" {
   type        = string
-  description = "Statistic the trigger should use, such as Average"
+  description = "Route53 parent zone ID. The module will create sub-domain DNS records in the parent zone for the EB environment and EFS"
 }
 
-variable "autoscale_unit" {
-  type        = string
-  description = "Unit for the trigger measurement, such as Bytes"
-}
-
-variable "autoscale_lower_bound" {
-  type        = number
-  description = "Minimum level of autoscale metric to remove an instance"
-}
-
-variable "autoscale_lower_increment" {
-  type        = number
-  description = "How many Amazon EC2 instances to remove when performing a scaling activity."
-}
-
-variable "autoscale_upper_bound" {
-  type        = number
-  description = "Maximum level of autoscale metric to add an instance"
-}
-
-variable "autoscale_upper_increment" {
-  type        = number
-  description = "How many Amazon EC2 instances to add when performing a scaling activity"
-}
-
-variable "elb_scheme" {
-  type        = string
-  description = "Specify `internal` if you want to create an internal load balancer in your Amazon VPC so that your Elastic Beanstalk application cannot be accessed from outside your Amazon VPC"
-}
-
-variable "additional_settings" {
-  type = list(object({
-    namespace = string
-    name      = string
-    value     = string
-  }))
-
-  description = "Additional Elastic Beanstalk setttings. For full list of options, see https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html"
+variable "security_groups" {
+  type        = list(string)
   default     = []
+  description = "List of security groups to be allowed to connect to the EC2 instances"
+}
+
+variable "ssh_key_pair" {
+  type        = string
+  default     = ""
+  description = "Name of SSH key that will be deployed on Elastic Beanstalk and DataPipeline instance. The key should be present in AWS"
+}
+
+variable "github_oauth_token" {
+  type        = string
+  default     = ""
+  description = "GitHub Oauth Token for accessing private repositories. Leave it empty when deploying a public 'Jenkins' repository, e.g. https://github.com/cloudposse/jenkins"
+}
+
+variable "github_organization" {
+  type        = string
+  default     = "cloudposse"
+  description = "GitHub organization, e.g. 'cloudposse'. By default, this module will deploy 'https://github.com/cloudposse/jenkins' repository"
+}
+
+variable "github_repo_name" {
+  type        = string
+  default     = "jenkins"
+  description = "GitHub repository name, e.g. 'jenkins'. By default, this module will deploy 'https://github.com/cloudposse/jenkins' repository"
+}
+
+variable "github_branch" {
+  type        = string
+  default     = "master"
+  description = "GitHub repository branch, e.g. 'master'. By default, this module will deploy 'https://github.com/cloudposse/jenkins' master branch"
+}
+
+# http://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html#build-env-ref-available
+variable "build_image" {
+  type        = string
+  default     = "aws/codebuild/docker:1.12.1"
+  description = "CodeBuild build image, e.g. 'aws/codebuild/docker:1.12.1'. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html#build-env-ref-available"
+}
+
+# http://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html#build-env-ref-compute-types
+variable "build_compute_type" {
+  type        = string
+  default     = "BUILD_GENERAL1_SMALL"
+  description = "CodeBuild compute type, e.g. 'BUILD_GENERAL1_SMALL'. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html#build-env-ref-compute-types"
+}
+
+variable "aws_account_id" {
+  type        = string
+  description = "AWS Account ID. Used as CodeBuild ENV variable $AWS_ACCOUNT_ID when building Docker images. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker.html"
+}
+
+variable "image_tag" {
+  type        = string
+  description = "Docker image tag in the ECR repository, e.g. 'latest'. Used as CodeBuild ENV variable $IMAGE_TAG when building Docker images. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker.html"
+  default     = "latest"
+}
+
+variable "env_vars" {
+  type        = map(string)
+  default     = {}
+  description = "Map of custom ENV variables to be provided to the Jenkins application running on Elastic Beanstalk, e.g. env_vars = { JENKINS_USER = 'admin' JENKINS_PASS = 'xxxxxx' }"
+}
+
+variable "use_efs_ip_address" {
+  type        = bool
+  default     = false
+  description = "If set to `true`, will provide the EFS IP address instead of DNS name to Jenkins as ENV var"
+}
+
+variable "efs_backup_schedule" {
+  type        = string
+  description = "A CRON expression specifying when AWS Backup initiates a backup job"
+  default     = null
+}
+
+variable "efs_backup_start_window" {
+  type        = number
+  description = "The amount of time in minutes before beginning a backup. Minimum value is 60 minutes"
+  default     = null
+}
+
+variable "efs_backup_completion_window" {
+  type        = number
+  description = "The amount of time AWS Backup attempts a backup before canceling the job and returning an error. Must be at least 60 minutes greater than `start_window`"
+  default     = null
+}
+
+variable "efs_backup_cold_storage_after" {
+  type        = number
+  description = "Specifies the number of days after creation that a recovery point is moved to cold storage"
+  default     = null
+}
+
+variable "efs_backup_delete_after" {
+  type        = number
+  description = "Specifies the number of days after creation that a recovery point is deleted. Must be 90 days greater than `cold_storage_after`"
+  default     = null
 }

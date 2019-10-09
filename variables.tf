@@ -1,23 +1,41 @@
-variable "aws_region" {
+variable "region" {
   type        = string
-  default     = "us-west-2"
   description = "AWS region in which to provision the AWS resources"
 }
 
 variable "namespace" {
   type        = string
-  description = "Namespace, which could be your organization name, e.g. 'cp' or 'cloudposse'"
-}
-
-variable "name" {
-  type        = string
-  description = "Solution name, e.g. 'app' or 'jenkins'"
-  default     = "jenkins"
+  description = "Namespace, which could be your organization name, e.g. 'eg' or 'cp'"
+  default     = ""
 }
 
 variable "stage" {
   type        = string
   description = "Stage, e.g. 'prod', 'staging', 'dev', or 'test'"
+  default     = ""
+}
+
+variable "name" {
+  type        = string
+  description = "Solution name, e.g. 'app' or 'jenkins'"
+}
+
+variable "delimiter" {
+  type        = string
+  default     = "-"
+  description = "Delimiter to be used between `namespace`, `stage`, `name` and `attributes`"
+}
+
+variable "attributes" {
+  type        = list(string)
+  default     = []
+  description = "Additional attributes (e.g. `1`)"
+}
+
+variable "tags" {
+  type        = map(string)
+  default     = {}
+  description = "Additional tags (e.g. `map('BusinessUnit`,`XYZ`)"
 }
 
 variable "description" {
@@ -26,10 +44,11 @@ variable "description" {
   description = "Will be used as Elastic Beanstalk application description"
 }
 
-# http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html#concepts.platforms.docker
+// https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html
+// https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html#platforms-supported.docker
 variable "solution_stack_name" {
   type        = string
-  default     = "64bit Amazon Linux 2017.09 v2.8.4 running Docker 17.09.1-ce"
+  default     = "64bit Amazon Linux 2018.03 v2.12.17 running Docker 18.06.1-ce"
   description = "Elastic Beanstalk stack, e.g. Docker, Go, Node, Java, IIS. For more info: http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html"
 }
 
@@ -66,17 +85,17 @@ variable "loadbalancer_certificate_arn" {
   description = "Load Balancer SSL certificate ARN. The certificate must be present in AWS Certificate Manager"
 }
 
-variable "public_subnets" {
+variable "loadbalancer_subnets" {
   type        = list(string)
-  description = "List of public subnets to place Elastic Load Balancer"
+  description = "List of subnets to place Elastic Load Balancer"
 }
 
-variable "private_subnets" {
+variable "application_subnets" {
   type        = list(string)
-  description = "List of private subnets to place EC2 instances and EFS"
+  description = "List of subnets to place EC2 instances and EFS"
 }
 
-variable "zone_id" {
+variable "dns_zone_id" {
   type        = string
   description = "Route53 parent zone ID. The module will create sub-domain DNS records in the parent zone for the EB environment and EFS"
 }
@@ -142,60 +161,44 @@ variable "image_tag" {
   default     = "latest"
 }
 
-variable "env_default_key" {
-  type        = string
-  default     = "DEFAULT_ENV_%d"
-  description = "Default ENV variable key for Elastic Beanstalk `aws:elasticbeanstalk:application:environment` setting"
-}
-
-variable "env_default_value" {
-  type        = string
-  default     = "UNSET"
-  description = "Default ENV variable value for Elastic Beanstalk `aws:elasticbeanstalk:application:environment` setting"
-}
-
 variable "env_vars" {
   type        = map(string)
   default     = {}
   description = "Map of custom ENV variables to be provided to the Jenkins application running on Elastic Beanstalk, e.g. env_vars = { JENKINS_USER = 'admin' JENKINS_PASS = 'xxxxxx' }"
 }
 
-variable "noncurrent_version_expiration_days" {
-  type        = string
-  default     = "35"
-  description = "Backup S3 bucket noncurrent version expiration days"
-}
-
-variable "delimiter" {
-  type        = string
-  default     = "-"
-  description = "Delimiter to be used between `name`, `namespace`, `stage`, etc."
-}
-
-variable "attributes" {
-  type        = list(string)
-  default     = []
-  description = "Additional attributes (e.g. `policy` or `role`)"
-}
-
-variable "tags" {
-  type        = map(string)
-  default     = {}
-  description = "Additional tags (e.g. `map('BusinessUnit`,`XYZ`)"
-}
-
-variable "datapipeline_config" {
-  type        = map(string)
-  description = "DataPipeline configuration options"
-
-  default = {
-    instance_type = "t2.small"
-    email         = ""
-    period        = "24 hours"
-    timeout       = "60 Minutes"
-  }
-}
-
 variable "use_efs_ip_address" {
-  default = "false"
+  type        = bool
+  default     = false
+  description = "If set to `true`, will provide the EFS IP address instead of DNS name to Jenkins as ENV var"
+}
+
+variable "efs_backup_schedule" {
+  type        = string
+  description = "A CRON expression specifying when AWS Backup initiates a backup job"
+  default     = null
+}
+
+variable "efs_backup_start_window" {
+  type        = number
+  description = "The amount of time in minutes before beginning a backup. Minimum value is 60 minutes"
+  default     = null
+}
+
+variable "efs_backup_completion_window" {
+  type        = number
+  description = "The amount of time AWS Backup attempts a backup before canceling the job and returning an error. Must be at least 60 minutes greater than `start_window`"
+  default     = null
+}
+
+variable "efs_backup_cold_storage_after" {
+  type        = number
+  description = "Specifies the number of days after creation that a recovery point is moved to cold storage"
+  default     = null
+}
+
+variable "efs_backup_delete_after" {
+  type        = number
+  description = "Specifies the number of days after creation that a recovery point is deleted. Must be 90 days greater than `cold_storage_after`"
+  default     = null
 }

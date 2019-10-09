@@ -1,6 +1,6 @@
 # Elastic Beanstalk Application
 module "elastic_beanstalk_application" {
-  source      = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application.git?ref=tags/0.1.6"
+  source      = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application.git?ref=tags/0.3.0"
   namespace   = var.namespace
   name        = var.name
   stage       = var.stage
@@ -12,13 +12,14 @@ module "elastic_beanstalk_application" {
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source        = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.11.0"
-  namespace     = var.namespace
-  name          = var.name
-  stage         = var.stage
-  zone_id       = var.zone_id
-  app           = module.elastic_beanstalk_application.app_name
-  instance_type = var.master_instance_type
+  source                             = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.14.0"
+  namespace                          = var.namespace
+  name                               = var.name
+  stage                              = var.stage
+  region                             = var.region
+  zone_id                            = var.dns_zone_id
+  elastic_beanstalk_application_name = module.elastic_beanstalk_application.elastic_beanstalk_application_name
+  instance_type                      = var.master_instance_type
 
   # Set `min` and `max` number of running EC2 instances to `1` since we want only one Jenkins master running at any time
   autoscale_min = 1
@@ -26,8 +27,8 @@ module "elastic_beanstalk_environment" {
 
   # Since we set `autoscale_min = autoscale_max`, we need to set `updating_min_in_service` to 0 for the AutoScaling Group to work.
   # Elastic Beanstalk will terminate the master instance and replace it with a new one in case of any issues with it.
-  # But it's OK since we store all Jenkins state (settings, jobs, etc.) on the EFS.
-  # If the instance gets replaced or rebooted, Jenkins will find all the data on EFS after restart.
+  # It's OK since we store all Jenkins state (settings, jobs, etc.) on the EFS.
+  # If the instance gets replaced or rebooted, Jenkins will find all the data on the EFS after restart.
   updating_min_in_service = 0
 
   updating_max_batch = 1
@@ -36,13 +37,11 @@ module "elastic_beanstalk_environment" {
   loadbalancer_type            = var.loadbalancer_type
   loadbalancer_certificate_arn = var.loadbalancer_certificate_arn
   vpc_id                       = var.vpc_id
-  public_subnets               = var.public_subnets
-  private_subnets              = var.private_subnets
+  loadbalancer_subnets         = var.loadbalancer_subnets
+  application_subnets          = var.application_subnets
   security_groups              = var.security_groups
   keypair                      = var.ssh_key_pair
   solution_stack_name          = var.solution_stack_name
-  env_default_key              = var.env_default_key
-  env_default_value            = var.env_default_value
 
   # Provide EFS DNS name to EB in the `EFS_HOST` ENV var. EC2 instance will mount to the EFS filesystem and use it to store Jenkins state
   # Add slaves Security Group `JENKINS_SLAVE_SECURITY_GROUPS` (comma-separated if more than one). Will be used by Jenkins to init the EC2 plugin to launch slaves inside the Security Group
@@ -52,7 +51,7 @@ module "elastic_beanstalk_environment" {
       "USE_EFS_IP"                    = var.use_efs_ip_address
       "JENKINS_SLAVE_SECURITY_GROUPS" = aws_security_group.slaves.id
     },
-    var.env_vars,
+    var.env_vars
   )
 
   delimiter  = var.delimiter
@@ -62,7 +61,7 @@ module "elastic_beanstalk_environment" {
 
 # Elastic Container Registry Docker Repository
 module "ecr" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-ecr.git?ref=tags/0.6.0"
+  source     = "git::https://github.com/cloudposse/terraform-aws-ecr.git?ref=tags/0.7.0"
   namespace  = var.namespace
   name       = var.name
   stage      = var.stage
@@ -73,50 +72,48 @@ module "ecr" {
 
 # EFS to store Jenkins state (settings, jobs, etc.)
 module "efs" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.9.0"
+  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.10.0"
   namespace          = var.namespace
   name               = var.name
   stage              = var.stage
-  aws_region         = var.aws_region
+  region             = var.region
   vpc_id             = var.vpc_id
-  subnets            = var.private_subnets
+  subnets            = var.application_subnets
   availability_zones = var.availability_zones
-  zone_id            = var.zone_id
+  zone_id            = var.dns_zone_id
 
-  # EC2 instances (from `elastic_beanstalk_environment`) and DataPipeline instances (from `efs_backup`) are allowed to connect to the EFS
-  security_groups = [module.elastic_beanstalk_environment.security_group_id, module.efs_backup.security_group_id]
+  # EC2 instances (from `elastic_beanstalk_environment`) are allowed to connect to the EFS
+  security_groups = [module.elastic_beanstalk_environment.security_group_id]
 
   delimiter  = var.delimiter
   attributes = [compact(concat(var.attributes, ["efs"]))]
   tags       = var.tags
 }
 
-# EFS backup to S3
+# EFS backup
 module "efs_backup" {
-  source                             = "git::https://github.com/cloudposse/terraform-aws-efs-backup.git?ref=tags/0.9.0"
-  name                               = var.name
-  stage                              = var.stage
-  namespace                          = var.namespace
-  region                             = var.aws_region
-  vpc_id                             = var.vpc_id
-  efs_mount_target_id                = element(module.efs.mount_target_ids, 0)
-  use_ip_address                     = var.use_efs_ip_address
-  noncurrent_version_expiration_days = var.noncurrent_version_expiration_days
-  ssh_key_pair                       = var.ssh_key_pair
-  modify_security_group              = "false"
-  datapipeline_config                = var.datapipeline_config
-  delimiter                          = var.delimiter
-  attributes                         = [compact(concat(var.attributes, ["efs-backup"]))]
-  tags                               = var.tags
+  source             = "git::https://github.com/cloudposse/terraform-aws-backup.git?ref=tags/0.1.1"
+  namespace          = var.namespace
+  stage              = var.stage
+  name               = var.name
+  attributes         = var.attributes
+  tags               = var.tags
+  delimiter          = var.delimiter
+  backup_resources   = [module.efs.arn]
+  schedule           = var.efs_backup_schedule
+  start_window       = var.efs_backup_start_window
+  completion_window  = var.efs_backup_completion_window
+  cold_storage_after = var.efs_backup_cold_storage_after
+  delete_after       = var.efs_backup_delete_after
 }
 
 # CodePipeline/CodeBuild to build Jenkins Docker image, store it to a ECR repo, and deploy it to Elastic Beanstalk running Docker stack
 module "cicd" {
-  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.6.0"
+  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.7.0"
   namespace           = var.namespace
   name                = var.name
   stage               = var.stage
-  app                 = module.elastic_beanstalk_application.app_name
+  app                 = module.elastic_beanstalk_application.elastic_beanstalk_application_name
   env                 = module.elastic_beanstalk_environment.name
   enabled             = "true"
   github_oauth_token  = var.github_oauth_token
@@ -126,7 +123,7 @@ module "cicd" {
   build_image         = var.build_image
   build_compute_type  = var.build_compute_type
   privileged_mode     = "true"
-  aws_region          = var.aws_region
+  aws_region          = var.region
   aws_account_id      = var.aws_account_id
   image_repo_name     = module.ecr.repository_name
   image_tag           = var.image_tag
@@ -138,7 +135,7 @@ module "cicd" {
 
 # Label for EC2 slaves
 module "label_slaves" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.7.0"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.15.0"
   namespace  = var.namespace
   name       = var.name
   stage      = var.stage
@@ -203,7 +200,7 @@ data "aws_iam_policy_document" "slaves" {
       "ec2:DescribeAvailabilityZones",
       "ec2:DescribeSecurityGroups",
       "ec2:DescribeSubnets",
-      "iam:PassRole",
+      "iam:PassRole"
     ]
 
     resources = ["*"]
