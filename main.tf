@@ -6,18 +6,22 @@ module "elastic_beanstalk_application" {
   stage       = var.stage
   description = var.description
   delimiter   = var.delimiter
-  attributes  = [compact(concat(var.attributes, ["eb-app"]))]
+  attributes  = [compact(concat(var.attributes, ["app"]))]
   tags        = var.tags
 }
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source                             = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.14.0"
-  namespace                          = var.namespace
-  name                               = var.name
-  stage                              = var.stage
+  source     = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.14.0"
+  namespace  = var.namespace
+  name       = var.name
+  stage      = var.stage
+  delimiter  = var.delimiter
+  attributes = [compact(concat(var.attributes, ["env"]))]
+  tags       = var.tags
+
   region                             = var.region
-  zone_id                            = var.dns_zone_id
+  dns_zone_id                        = var.dns_zone_id
   elastic_beanstalk_application_name = module.elastic_beanstalk_application.elastic_beanstalk_application_name
   instance_type                      = var.master_instance_type
 
@@ -39,7 +43,7 @@ module "elastic_beanstalk_environment" {
   vpc_id                       = var.vpc_id
   loadbalancer_subnets         = var.loadbalancer_subnets
   application_subnets          = var.application_subnets
-  security_groups              = var.security_groups
+  allowed_security_groups      = var.allowed_security_groups
   keypair                      = var.ssh_key_pair
   solution_stack_name          = var.solution_stack_name
 
@@ -53,10 +57,6 @@ module "elastic_beanstalk_environment" {
     },
     var.env_vars
   )
-
-  delimiter  = var.delimiter
-  attributes = [compact(concat(var.attributes, ["eb-env"]))]
-  tags       = var.tags
 }
 
 # Elastic Container Registry Docker Repository
@@ -66,7 +66,7 @@ module "ecr" {
   name       = var.name
   stage      = var.stage
   delimiter  = var.delimiter
-  attributes = [compact(concat(var.attributes, ["ecr"]))]
+  attributes = var.attributes
   tags       = var.tags
 }
 
@@ -76,6 +76,9 @@ module "efs" {
   namespace          = var.namespace
   name               = var.name
   stage              = var.stage
+  delimiter          = var.delimiter
+  attributes         = [compact(concat(var.attributes, ["efs"]))]
+  tags               = var.tags
   region             = var.region
   vpc_id             = var.vpc_id
   subnets            = var.application_subnets
@@ -84,10 +87,6 @@ module "efs" {
 
   # EC2 instances (from `elastic_beanstalk_environment`) are allowed to connect to the EFS
   security_groups = [module.elastic_beanstalk_environment.security_group_id]
-
-  delimiter  = var.delimiter
-  attributes = [compact(concat(var.attributes, ["efs"]))]
-  tags       = var.tags
 }
 
 # EFS backup
@@ -96,7 +95,7 @@ module "efs_backup" {
   namespace          = var.namespace
   stage              = var.stage
   name               = var.name
-  attributes         = var.attributes
+  attributes         = [compact(concat(var.attributes, ["efs"]))]
   tags               = var.tags
   delimiter          = var.delimiter
   backup_resources   = [module.efs.arn]
@@ -111,26 +110,26 @@ module "efs_backup" {
 module "cicd" {
   source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.7.0"
   namespace           = var.namespace
-  name                = var.name
   stage               = var.stage
+  name                = var.name
+  delimiter           = var.delimiter
+  attributes          = [compact(concat(var.attributes, ["cicd"]))]
+  tags                = var.tags
   app                 = module.elastic_beanstalk_application.elastic_beanstalk_application_name
   env                 = module.elastic_beanstalk_environment.name
-  enabled             = "true"
+  enabled             = true
   github_oauth_token  = var.github_oauth_token
   repo_owner          = var.github_organization
   repo_name           = var.github_repo_name
   branch              = var.github_branch
   build_image         = var.build_image
   build_compute_type  = var.build_compute_type
-  privileged_mode     = "true"
+  privileged_mode     = true
   aws_region          = var.region
   aws_account_id      = var.aws_account_id
   image_repo_name     = module.ecr.repository_name
   image_tag           = var.image_tag
-  poll_source_changes = "true"
-  delimiter           = var.delimiter
-  attributes          = [compact(concat(var.attributes, ["cicd"]))]
-  tags                = var.tags
+  poll_source_changes = true
 }
 
 # Label for EC2 slaves
@@ -155,7 +154,7 @@ resource "aws_security_group" "slaves" {
     from_port       = 0
     to_port         = 0
     protocol        = -1
-    security_groups = var.security_groups
+    security_groups = var.allowed_security_groups
   }
 
   # Allow Jenkins master instance to communicate with Jenkins slave instances on SSH port 22

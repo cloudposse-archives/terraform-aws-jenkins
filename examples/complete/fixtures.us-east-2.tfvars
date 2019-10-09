@@ -6,7 +6,7 @@ namespace = "eg"
 
 stage = "test"
 
-name = "elastic-beanstalk-env"
+name = "jenkins"
 
 description = "Test elastic-beanstalk-environment"
 

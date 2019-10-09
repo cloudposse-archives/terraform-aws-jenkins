@@ -80,30 +80,9 @@ variable "loadbalancer_type" {
   description = "Load Balancer type, e.g. 'application' or 'classic'"
 }
 
-variable "loadbalancer_certificate_arn" {
-  type        = string
-  description = "Load Balancer SSL certificate ARN. The certificate must be present in AWS Certificate Manager"
-}
-
-variable "loadbalancer_subnets" {
-  type        = list(string)
-  description = "List of subnets to place Elastic Load Balancer"
-}
-
-variable "application_subnets" {
-  type        = list(string)
-  description = "List of subnets to place EC2 instances and EFS"
-}
-
 variable "dns_zone_id" {
   type        = string
   description = "Route53 parent zone ID. The module will create sub-domain DNS records in the parent zone for the EB environment and EFS"
-}
-
-variable "security_groups" {
-  type        = list(string)
-  default     = []
-  description = "List of security groups to be allowed to connect to the EC2 instances"
 }
 
 variable "ssh_key_pair" {

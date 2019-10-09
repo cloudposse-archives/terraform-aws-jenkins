@@ -100,16 +100,16 @@ variable "dns_zone_id" {
   description = "Route53 parent zone ID. The module will create sub-domain DNS records in the parent zone for the EB environment and EFS"
 }
 
-variable "security_groups" {
+variable "allowed_security_groups" {
   type        = list(string)
   default     = []
-  description = "List of security groups to be allowed to connect to the EC2 instances"
+  description = "List of security groups to be allowed to connect to Jenkins master EC2 instances"
 }
 
 variable "ssh_key_pair" {
   type        = string
   default     = ""
-  description = "Name of SSH key that will be deployed on Elastic Beanstalk and DataPipeline instance. The key should be present in AWS"
+  description = "Name of SSH key that will be deployed on Elastic Beanstalk instances. The key should be present in AWS"
 }
 
 variable "github_oauth_token" {
