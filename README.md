@@ -10,6 +10,7 @@
 and deploy to [Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) running [Docker](https://www.docker.com/).
 
 This is an enterprise-ready, scalable and highly-available architecture and the CI/CD pattern to build and deploy Jenkins.
+
 ## Features
 
 The module will create the following AWS resources:
@@ -18,9 +19,8 @@ The module will create the following AWS resources:
    * Elastic Beanstalk Environment with Docker stack to run the Jenkins master
    * ECR repository to store the Jenkins Docker image
    * EFS filesystem to store Jenkins config and jobs (it will be mounted to a directory on the EC2 host, and then to the Docker container)
+   * AWS Backup stack to automatically backup the EFS
    * CodePipeline with CodeBuild to build and deploy Jenkins so even Jenkins itself follows the CI/CD pattern
-   * CloudFormation stack to run a DataPipeline to automatically backup the EFS to S3
-   * CloudFormation stack for SNS notifications about the status of each backup
 
 
 After all of the AWS resources are created,
@@ -32,15 +32,6 @@ __CodePipeline__ will:
   * Save the Docker image to the ECR repo
   * Deploy the Docker image from the ECR repo to Elastic Beanstalk running Docker stack
   * Monitor the GitHub repo for changes and re-run the steps above if new commits are pushed
-
-
-__DataPipeline__ will run on the specified schedule and will backup all Jenkins files to an S3 bucket by doing the following:
-
-  * Spawn an EC2 instance
-  * Mount the EFS filesystem to a directory on the EC2 instance
-  * Backup the directory to an S3 bucket
-  * Notify about the status of the backup (Success or Failure) via email
-  * Destroy the EC2 instance
 
 
 ![jenkins build server architecture](https://user-images.githubusercontent.com/52489/30888694-d07d68c8-a2d6-11e7-90b2-d8275ef94f39.png)
@@ -84,217 +75,79 @@ We literally have [*hundreds of terraform modules*][terraform_modules] that are 
 Instead pin to the release tag (e.g. `?ref=tags/x.y.z`) of one of our [latest releases](https://github.com/cloudposse/terraform-aws-jenkins/releases).
 
 
-For complete examples, see [examples](examples).
+For a complete example, see [examples/complete](examples/complete).
 
-
-
-
-## Examples
-
-### Deploy Jenkins into an existing VPC with existing subnets
+For automatic tests of the complete example, see [test](test).
 
 ```hcl
-variable "max_availability_zones" {
-  default = "2"
-}
-
-data "aws_availability_zones" "available" {}
-
-module "jenkins" {
-  source      = "git::https://github.com/cloudposse/terraform-aws-jenkins.git?ref=master"
-  namespace   = "cp"
-  name        = "jenkins"
-  stage       = "prod"
-  description = "Jenkins server as Docker container running on Elastic Beanstalk"
-
-  master_instance_type         = "t2.medium"
-  aws_account_id               = "000111222333"
-  aws_region                   = "us-west-2"
-  availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
-  vpc_id                       = "vpc-a22222ee"
-  zone_id                      = "ZXXXXXXXXXXX"
-  public_subnets               = ["subnet-e63f82cb", "subnet-e66f44ab", "subnet-e88f42bd"]
-  private_subnets              = ["subnet-e99d23eb", "subnet-e77e12bb", "subnet-e58a52bc"]
-  loadbalancer_certificate_arn = "XXXXXXXXXXXXXXXXX"
-  ssh_key_pair                 = "ssh-key-jenkins"
-
-  github_oauth_token  = ""
-  github_organization = "cloudposse"
-  github_repo_name    = "jenkins"
-  github_branch       = "master"
-
-  datapipeline_config = {
-    instance_type = "t2.medium"
-    email         = "me@mycompany.com"
-    period        = "12 hours"
-    timeout       = "60 Minutes"
+  provider "aws" {
+    region = var.region
   }
 
-  env_vars = {
-    JENKINS_USER          = "admin"
-    JENKINS_PASS          = "123456"
-    JENKINS_NUM_EXECUTORS = 4
+  module "vpc" {
+    source     = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=tags/0.8.0"
+    namespace  = var.namespace
+    stage      = var.stage
+    name       = var.name
+    attributes = var.attributes
+    tags       = var.tags
+    delimiter  = var.delimiter
+    cidr_block = "172.16.0.0/16"
   }
 
-  tags = {
-    BusinessUnit = "ABC"
-    Department   = "XYZ"
+  module "subnets" {
+    source               = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=tags/0.16.0"
+    availability_zones   = var.availability_zones
+    namespace            = var.namespace
+    stage                = var.stage
+    name                 = var.name
+    attributes           = var.attributes
+    tags                 = var.tags
+    delimiter            = var.delimiter
+    vpc_id               = module.vpc.vpc_id
+    igw_id               = module.vpc.igw_id
+    cidr_block           = module.vpc.vpc_cidr_block
+    nat_gateway_enabled  = true
+    nat_instance_enabled = false
   }
-}
+
+  module "jenkins" {
+    source      = "../../"
+    namespace   = var.namespace
+    stage       = var.stage
+    name        = var.name
+    description = var.description
+
+    master_instance_type = var.master_instance_type
+    aws_account_id       = var.aws_account_id
+    region               = var.region
+    availability_zones   = var.availability_zones
+    vpc_id               = module.vpc.vpc_id
+    dns_zone_id          = var.dns_zone_id
+    loadbalancer_subnets = module.subnets.public_subnet_ids
+    application_subnets  = module.subnets.private_subnet_ids
+
+    environment_type             = var.environment_type
+    loadbalancer_type            = var.loadbalancer_type
+    loadbalancer_certificate_arn = var.loadbalancer_certificate_arn
+    availability_zone_selector   = var.availability_zone_selector
+    rolling_update_type          = var.rolling_update_type
+
+    github_oauth_token  = var.github_oauth_token
+    github_organization = var.github_organization
+    github_repo_name    = var.github_repo_name
+    github_branch       = var.github_branch
+
+    env_vars = {
+      JENKINS_USER          = var.jenkins_username
+      JENKINS_PASS          = var.jenkins_password
+      JENKINS_NUM_EXECUTORS = var.jenkins_num_executors
+    }
+  }
 ```
 
-### Deploy Jenkins into an existing VPC and new subnets
 
-```hcl
-variable "max_availability_zones" {
-  default = "2"
-}
 
-data "aws_availability_zones" "available" {}
-
-module "jenkins" {
-  source      = "git::https://github.com/cloudposse/terraform-aws-jenkins.git?ref=master"
-  namespace   = "cp"
-  name        = "jenkins"
-  stage       = "prod"
-  description = "Jenkins server as Docker container running on Elastic Beanstalk"
-
-  master_instance_type         = "t2.medium"
-  aws_account_id               = "000111222333"
-  aws_region                   = "us-west-2"
-  availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
-  vpc_id                       = "vpc-a22222ee"
-  zone_id                      = "ZXXXXXXXXXXX"
-  public_subnets               = "${module.subnets.public_subnet_ids}"
-  private_subnets              = "${module.subnets.private_subnet_ids}"
-  loadbalancer_certificate_arn = "XXXXXXXXXXXXXXXXX"
-  ssh_key_pair                 = "ssh-key-jenkins"
-
-  github_oauth_token  = ""
-  github_organization = "cloudposse"
-  github_repo_name    = "jenkins"
-  github_branch       = "master"
-
-  datapipeline_config = {
-    instance_type = "t2.medium"
-    email         = "me@mycompany.com"
-    period        = "12 hours"
-    timeout       = "60 Minutes"
-  }
-
-  env_vars = {
-    JENKINS_USER          = "admin"
-    JENKINS_PASS          = "123456"
-    JENKINS_NUM_EXECUTORS = 4
-  }
-
-  tags = {
-    BusinessUnit = "ABC"
-    Department   = "XYZ"
-  }
-}
-
-module "subnets" {
-  source              = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
-  availability_zones  = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
-  namespace           = "cp"
-  name                = "jenkins"
-  stage               = "prod"
-  region              = "us-west-2"
-  vpc_id              = "vpc-a22222ee"
-  igw_id              = "igw-s32321vd"
-  cidr_block          = "10.0.0.0/16"
-  nat_gateway_enabled = "true"
-
-  tags = {
-    BusinessUnit = "ABC"
-    Department   = "XYZ"
-  }
-}
-```
-
-### Deploy Jenkins into a new VPC and new subnets
-
-```hcl
-variable "max_availability_zones" {
-  default = "2"
-}
-
-data "aws_availability_zones" "available" {}
-
-module "jenkins" {
-  source      = "git::https://github.com/cloudposse/terraform-aws-jenkins.git?ref=master"
-  namespace   = "cp"
-  name        = "jenkins"
-  stage       = "prod"
-  description = "Jenkins server as Docker container running on Elastic Beanstalk"
-
-  master_instance_type         = "t2.medium"
-  aws_account_id               = "000111222333"
-  aws_region                   = "us-west-2"
-  availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
-  vpc_id                       = "${module.vpc.vpc_id}"
-  zone_id                      = "ZXXXXXXXXXXX"
-  public_subnets               = "${module.subnets.public_subnet_ids}"
-  private_subnets              = "${module.subnets.private_subnet_ids}"
-  loadbalancer_certificate_arn = "XXXXXXXXXXXXXXXXX"
-  ssh_key_pair                 = "ssh-key-jenkins"
-
-  github_oauth_token  = ""
-  github_organization = "cloudposse"
-  github_repo_name    = "jenkins"
-  github_branch       = "master"
-
-  datapipeline_config = {
-    instance_type = "t2.medium"
-    email         = "me@mycompany.com"
-    period        = "12 hours"
-    timeout       = "60 Minutes"
-  }
-
-  env_vars = {
-    JENKINS_USER          = "admin"
-    JENKINS_PASS          = "123456"
-    JENKINS_NUM_EXECUTORS = 4
-  }
-
-  tags = {
-    BusinessUnit = "ABC"
-    Department   = "XYZ"
-  }
-}
-
-module "vpc" {
-  source                           = "git::https://github.com/cloudposse/terraform-aws-vpc.git?ref=master"
-  namespace                        = "cp"
-  name                             = "jenkins"
-  stage                            = "prod"
-  cidr_block                       = "10.0.0.0/16"
-
-  tags = {
-    BusinessUnit = "ABC"
-    Department   = "XYZ"
-  }
-}
-
-module "subnets" {
-  source              = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
-  availability_zones  = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
-  namespace           = "cp"
-  name                = "jenkins"
-  stage               = "prod"
-  region              = "us-west-2"
-  vpc_id              = "${module.vpc.vpc_id}"
-  igw_id              = "${module.vpc.igw_id}"
-  cidr_block          = "${module.vpc.vpc_cidr_block}"
-  nat_gateway_enabled = "true"
-
-  tags = {
-    BusinessUnit = "ABC"
-    Department   = "XYZ"
-  }
-}
-```
 
 
 
@@ -312,12 +165,14 @@ Available targets:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| allowed_security_groups | List of security groups to be allowed to connect to Jenkins master EC2 instances | list(string) | `<list>` | no |
 | application_subnets | List of subnets to place EC2 instances and EFS | list(string) | - | yes |
 | attributes | Additional attributes (e.g. `1`) | list(string) | `<list>` | no |
+| availability_zone_selector | Availability Zone selector | string | `Any` | no |
 | availability_zones | List of Availability Zones for EFS | list(string) | - | yes |
 | aws_account_id | AWS Account ID. Used as CodeBuild ENV variable $AWS_ACCOUNT_ID when building Docker images. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker.html | string | - | yes |
-| build_compute_type | CodeBuild compute type, e.g. 'BUILD_GENERAL1_SMALL'. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html#build-env-ref-compute-types | string | `BUILD_GENERAL1_SMALL` | no |
-| build_image | CodeBuild build image, e.g. 'aws/codebuild/docker:1.12.1'. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html#build-env-ref-available | string | `aws/codebuild/docker:1.12.1` | no |
+| build_compute_type | CodeBuild compute type, e.g. 'BUILD_GENERAL1_SMALL'. For more info: https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html | string | `BUILD_GENERAL1_SMALL` | no |
+| build_image | CodeBuild build image, e.g. 'aws/codebuild/amazonlinux2-x86_64-standard:1.0'. For more info: https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html | string | `aws/codebuild/amazonlinux2-x86_64-standard:1.0` | no |
 | delimiter | Delimiter to be used between `namespace`, `stage`, `name` and `attributes` | string | `-` | no |
 | description | Will be used as Elastic Beanstalk application description | string | `Jenkins server as Docker container running on Elastic Benastalk` | no |
 | dns_zone_id | Route53 parent zone ID. The module will create sub-domain DNS records in the parent zone for the EB environment and EFS | string | - | yes |
@@ -327,22 +182,23 @@ Available targets:
 | efs_backup_schedule | A CRON expression specifying when AWS Backup initiates a backup job | string | `null` | no |
 | efs_backup_start_window | The amount of time in minutes before beginning a backup. Minimum value is 60 minutes | number | `null` | no |
 | env_vars | Map of custom ENV variables to be provided to the Jenkins application running on Elastic Beanstalk, e.g. env_vars = { JENKINS_USER = 'admin' JENKINS_PASS = 'xxxxxx' } | map(string) | `<map>` | no |
+| environment_type | Environment type, e.g. 'LoadBalanced' or 'SingleInstance'.  If setting to 'SingleInstance', `rolling_update_type` must be set to 'Time' or `Immutable`, and `loadbalancer_subnets` will be unused (it applies to the ELB, which does not exist in SingleInstance environments) | string | `LoadBalanced` | no |
 | github_branch | GitHub repository branch, e.g. 'master'. By default, this module will deploy 'https://github.com/cloudposse/jenkins' master branch | string | `master` | no |
 | github_oauth_token | GitHub Oauth Token for accessing private repositories. Leave it empty when deploying a public 'Jenkins' repository, e.g. https://github.com/cloudposse/jenkins | string | `` | no |
 | github_organization | GitHub organization, e.g. 'cloudposse'. By default, this module will deploy 'https://github.com/cloudposse/jenkins' repository | string | `cloudposse` | no |
 | github_repo_name | GitHub repository name, e.g. 'jenkins'. By default, this module will deploy 'https://github.com/cloudposse/jenkins' repository | string | `jenkins` | no |
 | healthcheck_url | Application Health Check URL. Elastic Beanstalk will call this URL to check the health of the application running on EC2 instances | string | `/login` | no |
 | image_tag | Docker image tag in the ECR repository, e.g. 'latest'. Used as CodeBuild ENV variable $IMAGE_TAG when building Docker images. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker.html | string | `latest` | no |
-| loadbalancer_certificate_arn | Load Balancer SSL certificate ARN. The certificate must be present in AWS Certificate Manager | string | - | yes |
+| loadbalancer_certificate_arn | Load Balancer SSL certificate ARN. The certificate must be present in AWS Certificate Manager | string | `` | no |
 | loadbalancer_subnets | List of subnets to place Elastic Load Balancer | list(string) | - | yes |
 | loadbalancer_type | Load Balancer type, e.g. 'application' or 'classic' | string | `application` | no |
 | master_instance_type | EC2 instance type for Jenkins master, e.g. 't2.medium' | string | `t2.medium` | no |
 | name | Solution name, e.g. 'app' or 'jenkins' | string | - | yes |
 | namespace | Namespace, which could be your organization name, e.g. 'eg' or 'cp' | string | `` | no |
 | region | AWS region in which to provision the AWS resources | string | - | yes |
-| security_groups | List of security groups to be allowed to connect to the EC2 instances | list(string) | `<list>` | no |
+| rolling_update_type | `Health`, `Time` or `Immutable`. Set it to `Immutable` to apply the configuration change to a fresh group of instances. For more details, see https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html#command-options-general-autoscalingupdatepolicyrollingupdate | string | `Health` | no |
 | solution_stack_name | Elastic Beanstalk stack, e.g. Docker, Go, Node, Java, IIS. For more info: http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html | string | `64bit Amazon Linux 2018.03 v2.12.17 running Docker 18.06.1-ce` | no |
-| ssh_key_pair | Name of SSH key that will be deployed on Elastic Beanstalk and DataPipeline instance. The key should be present in AWS | string | `` | no |
+| ssh_key_pair | Name of SSH key that will be deployed on Elastic Beanstalk instances. The key should be present in AWS | string | `` | no |
 | stage | Stage, e.g. 'prod', 'staging', 'dev', or 'test' | string | `` | no |
 | tags | Additional tags (e.g. `map('BusinessUnit`,`XYZ`) | map(string) | `<map>` | no |
 | use_efs_ip_address | If set to `true`, will provide the EFS IP address instead of DNS name to Jenkins as ENV var | bool | `false` | no |

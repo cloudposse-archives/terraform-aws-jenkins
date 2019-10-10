@@ -12,7 +12,7 @@ module "elastic_beanstalk_application" {
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.14.0"
+  source     = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.15.0"
   namespace  = var.namespace
   name       = var.name
   stage      = var.stage
@@ -24,6 +24,13 @@ module "elastic_beanstalk_environment" {
   dns_zone_id                        = var.dns_zone_id
   elastic_beanstalk_application_name = module.elastic_beanstalk_application.elastic_beanstalk_application_name
   instance_type                      = var.master_instance_type
+
+  tier                         = "WebServer"
+  environment_type             = var.environment_type
+  loadbalancer_type            = var.loadbalancer_type
+  loadbalancer_certificate_arn = var.loadbalancer_certificate_arn
+  availability_zone_selector   = var.availability_zone_selector
+  rolling_update_type          = var.rolling_update_type
 
   # Set `min` and `max` number of running EC2 instances to `1` since we want only one Jenkins master running at any time
   autoscale_min = 1
@@ -37,15 +44,13 @@ module "elastic_beanstalk_environment" {
 
   updating_max_batch = 1
 
-  healthcheck_url              = var.healthcheck_url
-  loadbalancer_type            = var.loadbalancer_type
-  loadbalancer_certificate_arn = var.loadbalancer_certificate_arn
-  vpc_id                       = var.vpc_id
-  loadbalancer_subnets         = var.loadbalancer_subnets
-  application_subnets          = var.application_subnets
-  allowed_security_groups      = var.allowed_security_groups
-  keypair                      = var.ssh_key_pair
-  solution_stack_name          = var.solution_stack_name
+  healthcheck_url         = var.healthcheck_url
+  vpc_id                  = var.vpc_id
+  loadbalancer_subnets    = var.loadbalancer_subnets
+  application_subnets     = var.application_subnets
+  allowed_security_groups = var.allowed_security_groups
+  keypair                 = var.ssh_key_pair
+  solution_stack_name     = var.solution_stack_name
 
   # Provide EFS DNS name to EB in the `EFS_HOST` ENV var. EC2 instance will mount to the EFS filesystem and use it to store Jenkins state
   # Add slaves Security Group `JENKINS_SLAVE_SECURITY_GROUPS` (comma-separated if more than one). Will be used by Jenkins to init the EC2 plugin to launch slaves inside the Security Group

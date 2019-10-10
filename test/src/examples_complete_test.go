@@ -43,15 +43,55 @@ func TestExamplesComplete(t *testing.T) {
 	// Run `terraform output` to get the value of an output variable
 	elasticBeanstalkApplicationName := terraform.Output(t, terraformOptions, "elastic_beanstalk_application_name")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-elastic-beanstalk-env", elasticBeanstalkApplicationName)
+	assert.Equal(t, "eg-test-jenkins-app", elasticBeanstalkApplicationName)
 
 	// Run `terraform output` to get the value of an output variable
 	elasticBeanstalkEnvironmentName := terraform.Output(t, terraformOptions, "elastic_beanstalk_environment_name")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-elastic-beanstalk-env", elasticBeanstalkEnvironmentName)
+	assert.Equal(t, "eg-test-jenkins-env", elasticBeanstalkEnvironmentName)
 
 	// Run `terraform output` to get the value of an output variable
 	elasticBeanstalkEnvironmentHostname := terraform.Output(t, terraformOptions, "elastic_beanstalk_environment_hostname")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "elastic-beanstalk-env.testing.cloudposse.co", elasticBeanstalkEnvironmentHostname)
+	assert.Equal(t, "jenkins.testing.cloudposse.co", elasticBeanstalkEnvironmentHostname)
+
+	// Run `terraform output` to get the value of an output variable
+	ecrRepositoryName := terraform.Output(t, terraformOptions, "ecr_repository_name")
+	// Verify we're getting back the outputs we expect
+	assert.Equal(t, "eg-test-jenkins", ecrRepositoryName)
+
+	// Run `terraform output` to get the value of an output variable
+	codebuildProjectName := terraform.Output(t, terraformOptions, "codebuild_project_name")
+	// Verify we're getting back the outputs we expect
+	assert.Equal(t, "eg-test-jenkins-build", codebuildProjectName)
+
+	// Run `terraform output` to get the value of an output variable
+	codebuildCacheBucketName := terraform.Output(t, terraformOptions, "codebuild_cache_bucket_name")
+	// Verify we're getting back the outputs we expect
+	assert.Equal(t, "eg-test-jenkins-build", codebuildCacheBucketName)
+
+	// Run `terraform output` to get the value of an output variable
+	codepipelineId := terraform.Output(t, terraformOptions, "codepipeline_id")
+	// Verify we're getting back the outputs we expect
+	assert.Equal(t, "eg-test-jenkins", codepipelineId)
+
+	// Run `terraform output` to get the value of an output variable
+	efsArn := terraform.Output(t, terraformOptions, "efs_arn")
+	// Verify we're getting back the outputs we expect
+	assert.Contains(t, efsArn, "arn:aws:elasticfilesystem:us-east-2:126450723953:file-system")
+
+	// Run `terraform output` to get the value of an output variable
+	efsBackupPlanArn := terraform.Output(t, terraformOptions, "efs_backup_plan_arn")
+	// Verify we're getting back the outputs we expect
+	assert.Contains(t, efsBackupPlanArn, "arn:aws:backup:us-east-2:126450723953:backup-plan")
+
+	// Run `terraform output` to get the value of an output variable
+	efsBackupVaultArn := terraform.Output(t, terraformOptions, "efs_backup_vault_arn")
+	// Verify we're getting back the outputs we expect
+	assert.Equal(t, "arn:aws:backup:us-east-2:126450723953:backup-vault:eg-test-jenkins", efsBackupVaultArn)
+
+	// Run `terraform output` to get the value of an output variable
+	efsBackupVaultId := terraform.Output(t, terraformOptions, "efs_backup_vault_id")
+	// Verify we're getting back the outputs we expect
+	assert.Equal(t, "eg-test-jenkins", efsBackupVaultId)
 }

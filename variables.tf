@@ -83,6 +83,7 @@ variable "loadbalancer_type" {
 variable "loadbalancer_certificate_arn" {
   type        = string
   description = "Load Balancer SSL certificate ARN. The certificate must be present in AWS Certificate Manager"
+  default     = ""
 }
 
 variable "loadbalancer_subnets" {
@@ -136,23 +137,42 @@ variable "github_branch" {
   description = "GitHub repository branch, e.g. 'master'. By default, this module will deploy 'https://github.com/cloudposse/jenkins' master branch"
 }
 
-# http://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html#build-env-ref-available
+# https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
 variable "build_image" {
   type        = string
-  default     = "aws/codebuild/docker:1.12.1"
-  description = "CodeBuild build image, e.g. 'aws/codebuild/docker:1.12.1'. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html#build-env-ref-available"
+  default     = "aws/codebuild/amazonlinux2-x86_64-standard:1.0"
+  description = "CodeBuild build image, e.g. 'aws/codebuild/amazonlinux2-x86_64-standard:1.0'. For more info: https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html"
 }
 
-# http://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html#build-env-ref-compute-types
+# https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html
 variable "build_compute_type" {
   type        = string
   default     = "BUILD_GENERAL1_SMALL"
-  description = "CodeBuild compute type, e.g. 'BUILD_GENERAL1_SMALL'. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html#build-env-ref-compute-types"
+  description = "CodeBuild compute type, e.g. 'BUILD_GENERAL1_SMALL'. For more info: https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html"
 }
 
 variable "aws_account_id" {
   type        = string
   description = "AWS Account ID. Used as CodeBuild ENV variable $AWS_ACCOUNT_ID when building Docker images. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker.html"
+}
+
+variable "availability_zone_selector" {
+  type        = string
+  default     = "Any"
+  description = "Availability Zone selector"
+}
+
+variable "environment_type" {
+  type        = string
+  default     = "LoadBalanced"
+  description = "Environment type, e.g. 'LoadBalanced' or 'SingleInstance'.  If setting to 'SingleInstance', `rolling_update_type` must be set to 'Time' or `Immutable`, and `loadbalancer_subnets` will be unused (it applies to the ELB, which does not exist in SingleInstance environments)"
+}
+
+# https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html#command-options-general-autoscalingupdatepolicyrollingupdate
+variable "rolling_update_type" {
+  type        = string
+  default     = "Health"
+  description = "`Health`, `Time` or `Immutable`. Set it to `Immutable` to apply the configuration change to a fresh group of instances. For more details, see https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html#command-options-general-autoscalingupdatepolicyrollingupdate"
 }
 
 variable "image_tag" {
