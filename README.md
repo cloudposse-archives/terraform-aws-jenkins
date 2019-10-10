@@ -190,6 +190,7 @@ Available targets:
 | healthcheck_url | Application Health Check URL. Elastic Beanstalk will call this URL to check the health of the application running on EC2 instances | string | `/login` | no |
 | image_tag | Docker image tag in the ECR repository, e.g. 'latest'. Used as CodeBuild ENV variable $IMAGE_TAG when building Docker images. For more info: http://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker.html | string | `latest` | no |
 | loadbalancer_certificate_arn | Load Balancer SSL certificate ARN. The certificate must be present in AWS Certificate Manager | string | `` | no |
+| loadbalancer_logs_bucket_force_destroy | Force destroy the S3 bucket for load balancer logs | bool | `false` | no |
 | loadbalancer_subnets | List of subnets to place Elastic Load Balancer | list(string) | - | yes |
 | loadbalancer_type | Load Balancer type, e.g. 'application' or 'classic' | string | `application` | no |
 | master_instance_type | EC2 instance type for Jenkins master, e.g. 't2.medium' | string | `t2.medium` | no |
