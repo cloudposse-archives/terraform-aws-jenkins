@@ -55,3 +55,9 @@ efs_backup_completion_window = 120
 efs_backup_cold_storage_after = 30
 
 efs_backup_delete_after = 180
+
+jenkins_username = "admin"
+
+jenkins_password = "1234567"
+
+jenkins_num_executors = 2

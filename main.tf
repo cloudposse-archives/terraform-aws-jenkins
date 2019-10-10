@@ -6,7 +6,7 @@ module "elastic_beanstalk_application" {
   stage       = var.stage
   description = var.description
   delimiter   = var.delimiter
-  attributes  = [compact(concat(var.attributes, ["app"]))]
+  attributes  = compact(concat(var.attributes, ["app"]))
   tags        = var.tags
 }
 
@@ -17,7 +17,7 @@ module "elastic_beanstalk_environment" {
   name       = var.name
   stage      = var.stage
   delimiter  = var.delimiter
-  attributes = [compact(concat(var.attributes, ["env"]))]
+  attributes = compact(concat(var.attributes, ["env"]))
   tags       = var.tags
 
   region                             = var.region
@@ -82,7 +82,7 @@ module "efs" {
   name               = var.name
   stage              = var.stage
   delimiter          = var.delimiter
-  attributes         = [compact(concat(var.attributes, ["efs"]))]
+  attributes         = compact(concat(var.attributes, ["efs"]))
   tags               = var.tags
   region             = var.region
   vpc_id             = var.vpc_id
@@ -100,7 +100,7 @@ module "efs_backup" {
   namespace          = var.namespace
   stage              = var.stage
   name               = var.name
-  attributes         = [compact(concat(var.attributes, ["efs"]))]
+  attributes         = compact(concat(var.attributes, ["efs"]))
   tags               = var.tags
   delimiter          = var.delimiter
   backup_resources   = [module.efs.arn]
@@ -118,7 +118,7 @@ module "cicd" {
   stage               = var.stage
   name                = var.name
   delimiter           = var.delimiter
-  attributes          = [compact(concat(var.attributes, ["cicd"]))]
+  attributes          = compact(concat(var.attributes, ["cicd"]))
   tags                = var.tags
   app                 = module.elastic_beanstalk_application.elastic_beanstalk_application_name
   env                 = module.elastic_beanstalk_environment.name
@@ -144,7 +144,7 @@ module "label_slaves" {
   name       = var.name
   stage      = var.stage
   delimiter  = var.delimiter
-  attributes = [compact(concat(var.attributes, ["slaves"]))]
+  attributes = compact(concat(var.attributes, ["slaves"]))
   tags       = var.tags
 }
 
