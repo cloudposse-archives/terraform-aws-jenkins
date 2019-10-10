@@ -176,3 +176,8 @@ variable "jenkins_num_executors" {
   type        = number
   description = "Number of Jenkins executors (slave instances)"
 }
+
+variable "loadbalancer_logs_bucket_force_destroy" {
+  type        = bool
+  description = "Force destroy the S3 bucket for load balancer logs"
+}

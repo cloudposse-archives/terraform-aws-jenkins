@@ -28,6 +28,8 @@ environment_type = "LoadBalanced"
 
 loadbalancer_type = "application"
 
+loadbalancer_logs_bucket_force_destroy = true
+
 rolling_update_type = "Health"
 
 github_oauth_token = ""

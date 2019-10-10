@@ -51,6 +51,7 @@ module "elastic_beanstalk_environment" {
   allowed_security_groups = var.allowed_security_groups
   keypair                 = var.ssh_key_pair
   solution_stack_name     = var.solution_stack_name
+  force_destroy           = var.loadbalancer_logs_bucket_force_destroy
 
   # Provide EFS DNS name to EB in the `EFS_HOST` ENV var. EC2 instance will mount to the EFS filesystem and use it to store Jenkins state
   # Add slaves Security Group `JENKINS_SLAVE_SECURITY_GROUPS` (comma-separated if more than one). Will be used by Jenkins to init the EC2 plugin to launch slaves inside the Security Group
@@ -77,18 +78,17 @@ module "ecr" {
 
 # EFS to store Jenkins state (settings, jobs, etc.)
 module "efs" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.10.0"
-  namespace          = var.namespace
-  name               = var.name
-  stage              = var.stage
-  delimiter          = var.delimiter
-  attributes         = compact(concat(var.attributes, ["efs"]))
-  tags               = var.tags
-  region             = var.region
-  vpc_id             = var.vpc_id
-  subnets            = var.application_subnets
-  availability_zones = var.availability_zones
-  zone_id            = var.dns_zone_id
+  source     = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=fix-outputs"
+  namespace  = var.namespace
+  name       = var.name
+  stage      = var.stage
+  delimiter  = var.delimiter
+  attributes = compact(concat(var.attributes, ["efs"]))
+  tags       = var.tags
+  region     = var.region
+  vpc_id     = var.vpc_id
+  subnets    = var.application_subnets
+  zone_id    = var.dns_zone_id
 
   # EC2 instances (from `elastic_beanstalk_environment`) are allowed to connect to the EFS
   security_groups = [module.elastic_beanstalk_environment.security_group_id]

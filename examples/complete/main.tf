@@ -45,16 +45,30 @@ module "jenkins" {
   loadbalancer_subnets = module.subnets.public_subnet_ids
   application_subnets  = module.subnets.private_subnet_ids
 
-  environment_type             = var.environment_type
-  loadbalancer_type            = var.loadbalancer_type
-  loadbalancer_certificate_arn = var.loadbalancer_certificate_arn
-  availability_zone_selector   = var.availability_zone_selector
-  rolling_update_type          = var.rolling_update_type
+  environment_type                       = var.environment_type
+  loadbalancer_type                      = var.loadbalancer_type
+  loadbalancer_certificate_arn           = var.loadbalancer_certificate_arn
+  availability_zone_selector             = var.availability_zone_selector
+  rolling_update_type                    = var.rolling_update_type
+  loadbalancer_logs_bucket_force_destroy = var.loadbalancer_logs_bucket_force_destroy
 
   github_oauth_token  = var.github_oauth_token
   github_organization = var.github_organization
   github_repo_name    = var.github_repo_name
   github_branch       = var.github_branch
+
+  image_tag = var.image_tag
+
+  healthcheck_url = var.healthcheck_url
+
+  build_image        = var.build_image
+  build_compute_type = var.build_compute_type
+
+  efs_backup_schedule           = var.efs_backup_schedule
+  efs_backup_start_window       = var.efs_backup_start_window
+  efs_backup_completion_window  = var.efs_backup_completion_window
+  efs_backup_cold_storage_after = var.efs_backup_cold_storage_after
+  efs_backup_delete_after       = var.efs_backup_delete_after
 
   env_vars = {
     JENKINS_USER          = var.jenkins_username

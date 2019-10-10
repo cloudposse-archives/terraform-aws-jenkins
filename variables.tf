@@ -222,3 +222,9 @@ variable "efs_backup_delete_after" {
   description = "Specifies the number of days after creation that a recovery point is deleted. Must be 90 days greater than `cold_storage_after`"
   default     = null
 }
+
+variable "loadbalancer_logs_bucket_force_destroy" {
+  type        = bool
+  default     = false
+  description = "Force destroy the S3 bucket for load balancer logs"
+}
