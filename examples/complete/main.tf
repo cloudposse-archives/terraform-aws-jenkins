@@ -51,6 +51,7 @@ module "jenkins" {
   availability_zone_selector             = var.availability_zone_selector
   rolling_update_type                    = var.rolling_update_type
   loadbalancer_logs_bucket_force_destroy = var.loadbalancer_logs_bucket_force_destroy
+  cicd_bucket_force_destroy              = var.cicd_bucket_force_destroy
 
   github_oauth_token  = var.github_oauth_token
   github_organization = var.github_organization
@@ -71,8 +72,8 @@ module "jenkins" {
   efs_backup_delete_after       = var.efs_backup_delete_after
 
   env_vars = {
-    JENKINS_USER          = var.jenkins_username
-    JENKINS_PASS          = var.jenkins_password
-    JENKINS_NUM_EXECUTORS = var.jenkins_num_executors
+    "JENKINS_USER"          = var.jenkins_username
+    "JENKINS_PASS"          = var.jenkins_password
+    "JENKINS_NUM_EXECUTORS" = var.jenkins_num_executors
   }
 }

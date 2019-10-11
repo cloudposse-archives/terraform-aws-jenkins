@@ -115,8 +115,7 @@ variable "ssh_key_pair" {
 
 variable "github_oauth_token" {
   type        = string
-  default     = ""
-  description = "GitHub Oauth Token for accessing private repositories. Leave it empty when deploying a public 'Jenkins' repository, e.g. https://github.com/cloudposse/jenkins"
+  description = "GitHub Oauth Token"
 }
 
 variable "github_organization" {
@@ -140,7 +139,7 @@ variable "github_branch" {
 # https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
 variable "build_image" {
   type        = string
-  default     = "aws/codebuild/amazonlinux2-x86_64-standard:1.0"
+  default     = "aws/codebuild/docker:1.12.1"
   description = "CodeBuild build image, e.g. 'aws/codebuild/amazonlinux2-x86_64-standard:1.0'. For more info: https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html"
 }
 
@@ -226,5 +225,11 @@ variable "efs_backup_delete_after" {
 variable "loadbalancer_logs_bucket_force_destroy" {
   type        = bool
   default     = false
-  description = "Force destroy the S3 bucket for load balancer logs"
+  description = "Force destroy the S3 bucket for load balancer logs even if it's not empty"
+}
+
+variable "cicd_bucket_force_destroy" {
+  type        = bool
+  default     = false
+  description = "Force destroy the CI/CD S3 bucket even if it's not empty"
 }

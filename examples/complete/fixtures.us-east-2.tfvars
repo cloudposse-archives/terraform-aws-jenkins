@@ -1,6 +1,6 @@
 region = "us-east-2"
 
-availability_zones = ["us-east-2a"]
+availability_zones = ["us-east-2a", "us-east-2b"]
 
 aws_account_id = "126450723953"
 
@@ -30,9 +30,13 @@ loadbalancer_type = "application"
 
 loadbalancer_logs_bucket_force_destroy = true
 
+cicd_bucket_force_destroy = true
+
 rolling_update_type = "Health"
 
-github_oauth_token = ""
+# `github_oauth_token` is required for CodePipeline to download the Jenkins repo (https://github.com/cloudposse/jenkins) from GitHub
+# Can be provided in `TF_VAR_github_oauth_token` environment variable
+# github_oauth_token = "XXXXXXXXXXXXXX"
 
 github_organization = "cloudposse"
 
@@ -41,7 +45,7 @@ github_repo_name = "jenkins"
 github_branch = "master"
 
 # https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
-build_image = "aws/codebuild/amazonlinux2-x86_64-standard:1.0"
+build_image = "aws/codebuild/docker:1.12.1"
 
 # https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html
 build_compute_type = "BUILD_GENERAL1_SMALL"

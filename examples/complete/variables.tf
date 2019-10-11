@@ -97,7 +97,7 @@ variable "dns_zone_id" {
 
 variable "github_oauth_token" {
   type        = string
-  description = "GitHub Oauth Token for accessing private repositories. Leave it empty when deploying a public 'Jenkins' repository, e.g. https://github.com/cloudposse/jenkins"
+  description = "GitHub Oauth Token"
 }
 
 variable "github_organization" {
@@ -180,4 +180,9 @@ variable "jenkins_num_executors" {
 variable "loadbalancer_logs_bucket_force_destroy" {
   type        = bool
   description = "Force destroy the S3 bucket for load balancer logs"
+}
+
+variable "cicd_bucket_force_destroy" {
+  type        = bool
+  description = "Force destroy the CI/CD S3 bucket even if it's not empty"
 }

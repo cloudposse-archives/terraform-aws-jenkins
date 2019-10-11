@@ -12,7 +12,7 @@ module "elastic_beanstalk_application" {
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.15.0"
+  source     = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.16.0"
   namespace  = var.namespace
   name       = var.name
   stage      = var.stage
@@ -113,28 +113,29 @@ module "efs_backup" {
 
 # CodePipeline/CodeBuild to build Jenkins Docker image, store it to a ECR repo, and deploy it to Elastic Beanstalk running Docker stack
 module "cicd" {
-  source              = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.7.0"
-  namespace           = var.namespace
-  stage               = var.stage
-  name                = var.name
-  delimiter           = var.delimiter
-  attributes          = compact(concat(var.attributes, ["cicd"]))
-  tags                = var.tags
-  app                 = module.elastic_beanstalk_application.elastic_beanstalk_application_name
-  env                 = module.elastic_beanstalk_environment.name
-  enabled             = true
-  github_oauth_token  = var.github_oauth_token
-  repo_owner          = var.github_organization
-  repo_name           = var.github_repo_name
-  branch              = var.github_branch
-  build_image         = var.build_image
-  build_compute_type  = var.build_compute_type
-  privileged_mode     = true
-  aws_region          = var.region
-  aws_account_id      = var.aws_account_id
-  image_repo_name     = module.ecr.repository_name
-  image_tag           = var.image_tag
-  poll_source_changes = true
+  source                             = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.8.0"
+  namespace                          = var.namespace
+  stage                              = var.stage
+  name                               = var.name
+  delimiter                          = var.delimiter
+  attributes                         = compact(concat(var.attributes, ["cicd"]))
+  tags                               = var.tags
+  elastic_beanstalk_application_name = module.elastic_beanstalk_application.elastic_beanstalk_application_name
+  elastic_beanstalk_environment_name = module.elastic_beanstalk_environment.name
+  enabled                            = true
+  github_oauth_token                 = var.github_oauth_token
+  repo_owner                         = var.github_organization
+  repo_name                          = var.github_repo_name
+  branch                             = var.github_branch
+  build_image                        = var.build_image
+  build_compute_type                 = var.build_compute_type
+  privileged_mode                    = true
+  region                             = var.region
+  aws_account_id                     = var.aws_account_id
+  image_repo_name                    = module.ecr.repository_name
+  image_tag                          = var.image_tag
+  poll_source_changes                = true
+  force_destroy                      = var.cicd_bucket_force_destroy
 }
 
 # Label for EC2 slaves
