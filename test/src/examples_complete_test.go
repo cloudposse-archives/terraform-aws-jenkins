@@ -1,7 +1,6 @@
 package test
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -23,20 +22,24 @@ func TestExamplesComplete(t *testing.T) {
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
 	defer terraform.Destroy(t, terraformOptions)
 
-	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
+	// This will run `terraform init` and `terraform apply`
 	_, err := terraform.InitAndApplyE(t, terraformOptions)
 
 	// We need to apply twice because of the current bug with `dynamic` blocks in terraform `aws` provider:
+	/*
+		Error: Provider produced inconsistent final plan
+		When expanding the plan for
+		module.jenkins.module.elastic_beanstalk_environment.aws_elastic_beanstalk_environment.default
+		to include new values learned so far during apply, provider "aws" produced an
+		invalid new value for .setting: block set length changed from 72 to 77.
+		This is a bug in the provider, which should be reported in the provider's own issue tracker.
+	*/
 	// https://github.com/terraform-providers/terraform-provider-aws/issues/10297
 	// https://github.com/terraform-providers/terraform-provider-aws/issues/7987
 	// https://github.com/hashicorp/terraform/issues/20517
 
 	if err != nil {
-		if strings.Contains(err.Error(), "Provider produced inconsistent final plan") {
-			terraform.Apply(t, terraformOptions)
-		} else {
-			assert.Fail(t, err.Error())
-		}
+		terraform.Apply(t, terraformOptions)
 	}
 
 	// Run `terraform output` to get the value of an output variable
