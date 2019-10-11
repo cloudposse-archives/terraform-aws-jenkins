@@ -1,6 +1,7 @@
 package test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -23,7 +24,20 @@ func TestExamplesComplete(t *testing.T) {
 	defer terraform.Destroy(t, terraformOptions)
 
 	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
-	terraform.InitAndApply(t, terraformOptions)
+	_, err := terraform.InitAndApplyE(t, terraformOptions)
+
+	// We need to apply twice because of the current bug with `dynamic` blocks in terraform `aws` provider:
+	// https://github.com/terraform-providers/terraform-provider-aws/issues/10297
+	// https://github.com/terraform-providers/terraform-provider-aws/issues/7987
+	// https://github.com/hashicorp/terraform/issues/20517
+
+	if err != nil {
+		if strings.Contains(err.Error(), "Provider produced inconsistent final plan") {
+			terraform.Apply(t, terraformOptions)
+		} else {
+			assert.Fail(t, err.Error())
+		}
+	}
 
 	// Run `terraform output` to get the value of an output variable
 	vpcCidr := terraform.Output(t, terraformOptions, "vpc_cidr")
