@@ -25,18 +25,20 @@ func TestExamplesComplete(t *testing.T) {
 	// This will run `terraform init` and `terraform apply`
 	_, err := terraform.InitAndApplyE(t, terraformOptions)
 
-	// We need to apply twice because of the current bug with `dynamic` blocks in terraform `aws` provider:
 	/*
+		We need to apply twice because of the current bug with `dynamic` blocks in terraform `aws` provider:
+
 		Error: Provider produced inconsistent final plan
 		When expanding the plan for
 		module.jenkins.module.elastic_beanstalk_environment.aws_elastic_beanstalk_environment.default
 		to include new values learned so far during apply, provider "aws" produced an
 		invalid new value for .setting: block set length changed from 72 to 77.
 		This is a bug in the provider, which should be reported in the provider's own issue tracker.
+
+		https://github.com/terraform-providers/terraform-provider-aws/issues/10297
+		https://github.com/terraform-providers/terraform-provider-aws/issues/7987
+		https://github.com/hashicorp/terraform/issues/20517
 	*/
-	// https://github.com/terraform-providers/terraform-provider-aws/issues/10297
-	// https://github.com/terraform-providers/terraform-provider-aws/issues/7987
-	// https://github.com/hashicorp/terraform/issues/20517
 
 	if err != nil {
 		terraform.Apply(t, terraformOptions)
@@ -80,17 +82,17 @@ func TestExamplesComplete(t *testing.T) {
 	// Run `terraform output` to get the value of an output variable
 	codebuildProjectName := terraform.Output(t, terraformOptions, "codebuild_project_name")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-jenkins-build", codebuildProjectName)
+	assert.Equal(t, "eg-test-jenkins-cicd-build", codebuildProjectName)
 
 	// Run `terraform output` to get the value of an output variable
 	codebuildCacheBucketName := terraform.Output(t, terraformOptions, "codebuild_cache_bucket_name")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-jenkins-build", codebuildCacheBucketName)
+	assert.Contains(t, codebuildCacheBucketName, "eg-test-jenkins-cicd-build")
 
 	// Run `terraform output` to get the value of an output variable
 	codepipelineId := terraform.Output(t, terraformOptions, "codepipeline_id")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-jenkins", codepipelineId)
+	assert.Equal(t, "eg-test-jenkins-cicd", codepipelineId)
 
 	// Run `terraform output` to get the value of an output variable
 	efsArn := terraform.Output(t, terraformOptions, "efs_arn")
@@ -105,10 +107,10 @@ func TestExamplesComplete(t *testing.T) {
 	// Run `terraform output` to get the value of an output variable
 	efsBackupVaultArn := terraform.Output(t, terraformOptions, "efs_backup_vault_arn")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "arn:aws:backup:us-east-2:126450723953:backup-vault:eg-test-jenkins", efsBackupVaultArn)
+	assert.Equal(t, "arn:aws:backup:us-east-2:126450723953:backup-vault:eg-test-jenkins-efs", efsBackupVaultArn)
 
 	// Run `terraform output` to get the value of an output variable
 	efsBackupVaultId := terraform.Output(t, terraformOptions, "efs_backup_vault_id")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-jenkins", efsBackupVaultId)
+	assert.Equal(t, "eg-test-jenkins-efs", efsBackupVaultId)
 }
