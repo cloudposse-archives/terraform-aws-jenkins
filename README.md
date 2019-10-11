@@ -3,7 +3,7 @@
 
 [![Cloud Posse][logo]](https://cpco.io/homepage)
 
-# terraform-aws-jenkins [![Codefresh Build Status](https://g.codefresh.io/api/badges/pipeline/cloudposse/terraform-modules%2Fterraform-aws-jenkins?type=cf-1)](https://g.codefresh.io/public/accounts/cloudposse/pipelines/5d9c0dd46d867eabdb30d36e) [![Latest Release](https://img.shields.io/github/release/cloudposse/terraform-aws-jenkins.svg)](https://github.com/cloudposse/terraform-aws-jenkins/releases/latest) [![Slack Community](https://slack.cloudposse.com/badge.svg)](https://slack.cloudposse.com)
+# terraform-aws-jenkins [![Codefresh Build Status](https://g.codefresh.io/api/badges/pipeline/cloudposse/terraform-modules%2Fterraform-aws-jenkins?type=cf-1)](https://g.codefresh.io/public/accounts/cloudposse/pipelines/5d9fea1192fba6201f04faca) [![Latest Release](https://img.shields.io/github/release/cloudposse/terraform-aws-jenkins.svg)](https://github.com/cloudposse/terraform-aws-jenkins/releases/latest) [![Slack Community](https://slack.cloudposse.com/badge.svg)](https://slack.cloudposse.com)
 
 
 `terraform-aws-jenkins` is a Terraform module to build a Docker image with [Jenkins](https://jenkins.io/), save it to an [ECR](https://aws.amazon.com/ecr/) repo,
@@ -284,7 +284,7 @@ Are you using this project or any of our other projects? Consider [leaving a tes
 
 Check out these related projects.
 
-- [terraform-aws-elastic-beanstalk-applicationl](https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application) - Terraform module to provision AWS Elastic Beanstalk application
+- [terraform-aws-elastic-beanstalk-application](https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application) - Terraform module to provision AWS Elastic Beanstalk application
 - [terraform-aws-elastic-beanstalk-environment](https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment) - Terraform module to provision AWS Elastic Beanstalk environment
 - [terraform-aws-ecr](https://github.com/cloudposse/terraform-aws-ecr) - Terraform Module to manage Docker Container Registries on AWS ECR
 - [terraform-aws-efs](https://github.com/cloudposse/terraform-aws-efs) - Terraform Module to define an EFS Filesystem (aka NFS)
