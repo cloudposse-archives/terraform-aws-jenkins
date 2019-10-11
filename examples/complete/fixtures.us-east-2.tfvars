@@ -12,7 +12,7 @@ name = "jenkins"
 
 description = "Jenkins server as Docker container running on Elastic Benastalk"
 
-master_instance_type = "t2.small"
+master_instance_type = "t2.medium"
 
 healthcheck_url = "/login"
 
