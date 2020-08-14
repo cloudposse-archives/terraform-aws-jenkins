@@ -140,7 +140,7 @@ module "cicd" {
 
 # Label for EC2 slaves
 module "label_slaves" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.15.0"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.17.0"
   namespace  = var.namespace
   name       = var.name
   stage      = var.stage
