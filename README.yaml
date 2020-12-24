@@ -130,7 +130,9 @@ usage: |-
   }
 
   module "jenkins" {
-    source      = "git::https://github.com/cloudposse/terraform-aws-jenkins.git?ref=master"
+    source = "cloudposse/jenkins/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
     namespace   = var.namespace
     stage       = var.stage
     name        = var.name
