@@ -2,7 +2,6 @@ package test
 
 import (
 	"testing"
-    "os"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,7 +16,6 @@ func TestExamplesComplete(t *testing.T) {
 		Upgrade:      true,
 		// Variables to pass to our Terraform code using -var-file options
 		VarFiles: []string{"fixtures.us-east-2.tfvars"},
-// 		EnvVars: map[string]string{ "TF_VAR_github_oauth_token": os.Getenv("GITHUB_TOKEN") },
 	}
 
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
