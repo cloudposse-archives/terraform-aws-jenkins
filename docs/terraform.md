@@ -82,8 +82,8 @@
 | codepipeline\_arn | CodePipeline ARN |
 | codepipeline\_id | CodePipeline ID |
 | ecr\_registry\_id | Registry ID |
-| ecr\_registry\_url | Registry URL |
-| ecr\_repository\_name | Registry name |
+| ecr\_repository\_name | Repository name |
+| ecr\_repository\_url | Repository URL |
 | efs\_arn | EFS ARN |
 | efs\_backup\_plan\_arn | Backup Plan ARN |
 | efs\_backup\_plan\_version | Unique, randomly generated, Unicode, UTF-8 encoded string that serves as the version ID of the backup plan |
