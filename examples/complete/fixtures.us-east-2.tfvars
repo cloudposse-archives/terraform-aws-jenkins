@@ -36,7 +36,7 @@ rolling_update_type = "Health"
 
 # `github_oauth_token` is required for CodePipeline to download the Jenkins repo (https://github.com/cloudposse/jenkins) from GitHub
 # Can be provided in `TF_VAR_github_oauth_token` environment variable
-# github_oauth_token = "XXXXXXXXXXXXXX"
+github_oauth_token = "XXXXXXXXXXXXXX"
 
 github_organization = "cloudposse"
 

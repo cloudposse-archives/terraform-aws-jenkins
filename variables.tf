@@ -3,41 +3,6 @@ variable "region" {
   description = "AWS region in which to provision the AWS resources"
 }
 
-variable "namespace" {
-  type        = string
-  description = "Namespace, which could be your organization name, e.g. 'eg' or 'cp'"
-  default     = ""
-}
-
-variable "stage" {
-  type        = string
-  description = "Stage, e.g. 'prod', 'staging', 'dev', or 'test'"
-  default     = ""
-}
-
-variable "name" {
-  type        = string
-  description = "Solution name, e.g. 'app' or 'jenkins'"
-}
-
-variable "delimiter" {
-  type        = string
-  default     = "-"
-  description = "Delimiter to be used between `namespace`, `stage`, `name` and `attributes`"
-}
-
-variable "attributes" {
-  type        = list(string)
-  default     = []
-  description = "Additional attributes (e.g. `1`)"
-}
-
-variable "tags" {
-  type        = map(string)
-  default     = {}
-  description = "Additional tags (e.g. `map('BusinessUnit`,`XYZ`)"
-}
-
 variable "description" {
   type        = string
   default     = "Jenkins server as Docker container running on Elastic Benastalk"

@@ -1,24 +1,18 @@
 # Elastic Beanstalk Application
 module "elastic_beanstalk_application" {
-  source      = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-application.git?ref=tags/0.4.0"
-  namespace   = var.namespace
-  name        = var.name
-  stage       = var.stage
+  source      = "cloudposse/elastic-beanstalk-application/aws"
+  version     = "0.8.0"
   description = var.description
-  delimiter   = var.delimiter
-  attributes  = compact(concat(var.attributes, ["app"]))
-  tags        = var.tags
+  attributes  = ["app"]
+
+  context = module.this.context
 }
 
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment.git?ref=tags/0.16.0"
-  namespace  = var.namespace
-  name       = var.name
-  stage      = var.stage
-  delimiter  = var.delimiter
-  attributes = compact(concat(var.attributes, ["env"]))
-  tags       = var.tags
+  source     = "cloudposse/elastic-beanstalk-environment/aws"
+  version    = "0.32.0"
+  attributes = ["env"]
 
   region                             = var.region
   dns_zone_id                        = var.dns_zone_id
@@ -63,28 +57,23 @@ module "elastic_beanstalk_environment" {
     },
     var.env_vars
   )
+
+  context = module.this.context
 }
 
 # Elastic Container Registry Docker Repository
 module "ecr" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-ecr.git?ref=tags/0.7.0"
-  namespace  = var.namespace
-  name       = var.name
-  stage      = var.stage
-  delimiter  = var.delimiter
-  attributes = var.attributes
-  tags       = var.tags
+  source  = "cloudposse/ecr/aws"
+  version = "0.29.1"
+
+  context = module.this.context
 }
 
 # EFS to store Jenkins state (settings, jobs, etc.)
 module "efs" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-efs.git?ref=tags/0.11.0"
-  namespace  = var.namespace
-  name       = var.name
-  stage      = var.stage
-  delimiter  = var.delimiter
-  attributes = compact(concat(var.attributes, ["efs"]))
-  tags       = var.tags
+  source     = "cloudposse/efs/aws"
+  version    = "0.25.0"
+  attributes = ["efs"]
   region     = var.region
   vpc_id     = var.vpc_id
   subnets    = var.application_subnets
@@ -92,34 +81,30 @@ module "efs" {
 
   # EC2 instances (from `elastic_beanstalk_environment`) are allowed to connect to the EFS
   security_groups = [module.elastic_beanstalk_environment.security_group_id]
+
+  context = module.this.context
 }
 
 # EFS backup
 module "efs_backup" {
-  source             = "git::https://github.com/cloudposse/terraform-aws-backup.git?ref=tags/0.1.1"
-  namespace          = var.namespace
-  stage              = var.stage
-  name               = var.name
-  attributes         = compact(concat(var.attributes, ["efs"]))
-  tags               = var.tags
-  delimiter          = var.delimiter
+  source             = "cloudposse/backup/aws"
+  version            = "0.4.0"
+  attributes         = ["efs"]
   backup_resources   = [module.efs.arn]
   schedule           = var.efs_backup_schedule
   start_window       = var.efs_backup_start_window
   completion_window  = var.efs_backup_completion_window
   cold_storage_after = var.efs_backup_cold_storage_after
   delete_after       = var.efs_backup_delete_after
+
+  context = module.this.context
 }
 
 # CodePipeline/CodeBuild to build Jenkins Docker image, store it to a ECR repo, and deploy it to Elastic Beanstalk running Docker stack
 module "cicd" {
-  source                             = "git::https://github.com/cloudposse/terraform-aws-cicd.git?ref=tags/0.8.0"
-  namespace                          = var.namespace
-  stage                              = var.stage
-  name                               = var.name
-  delimiter                          = var.delimiter
-  attributes                         = compact(concat(var.attributes, ["cicd"]))
-  tags                               = var.tags
+  source                             = "cloudposse/cicd/aws"
+  version                            = "0.11.0"
+  attributes                         = ["cicd"]
   elastic_beanstalk_application_name = module.elastic_beanstalk_application.elastic_beanstalk_application_name
   elastic_beanstalk_environment_name = module.elastic_beanstalk_environment.name
   enabled                            = true
@@ -136,17 +121,17 @@ module "cicd" {
   image_tag                          = var.image_tag
   poll_source_changes                = true
   force_destroy                      = var.cicd_bucket_force_destroy
+
+  context = module.this.context
 }
 
 # Label for EC2 slaves
 module "label_slaves" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.15.0"
-  namespace  = var.namespace
-  name       = var.name
-  stage      = var.stage
-  delimiter  = var.delimiter
-  attributes = compact(concat(var.attributes, ["slaves"]))
-  tags       = var.tags
+  source     = "cloudposse/label/null"
+  version    = "0.22.1"
+  attributes = ["slaves"]
+
+  context = module.this.context
 }
 
 # Security Group for EC2 slaves

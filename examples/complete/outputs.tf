@@ -103,14 +103,14 @@ output "ecr_registry_id" {
   description = "Registry ID"
 }
 
-output "ecr_registry_url" {
-  value       = module.jenkins.ecr_registry_url
-  description = "Registry URL"
+output "ecr_repository_url" {
+  value       = module.jenkins.ecr_repository_url
+  description = "Repository URL"
 }
 
 output "ecr_repository_name" {
   value       = module.jenkins.ecr_repository_name
-  description = "Registry name"
+  description = "Repository name"
 }
 
 output "efs_arn" {
