@@ -9,8 +9,8 @@ variable "description" {
   description = "Will be used as Elastic Beanstalk application description"
 }
 
-// https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html
-// https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html#platforms-supported.docker
+# https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html
+# https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html#platforms-supported.docker
 variable "solution_stack_name" {
   type        = string
   default     = "64bit Amazon Linux 2018.03 v2.12.17 running Docker 18.06.1-ce"
