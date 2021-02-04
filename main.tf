@@ -128,7 +128,7 @@ module "cicd" {
 # Label for EC2 slaves
 module "label_slaves" {
   source     = "cloudposse/label/null"
-  version    = "0.22.1"
+  version    = "0.24.1"
   attributes = ["slaves"]
 
   context = module.this.context
