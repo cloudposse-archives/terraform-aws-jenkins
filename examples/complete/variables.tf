@@ -13,8 +13,8 @@ variable "description" {
   description = "Will be used as Elastic Beanstalk application description"
 }
 
-// https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html
-// https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html#platforms-supported.docker
+# https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html
+# https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html#platforms-supported.docker
 variable "solution_stack_name" {
   type        = string
   description = "Elastic Beanstalk stack, e.g. Docker, Go, Node, Java, IIS. For more info: http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html"
