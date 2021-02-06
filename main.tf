@@ -88,7 +88,7 @@ module "efs" {
 # EFS backup
 module "efs_backup" {
   source             = "cloudposse/backup/aws"
-  version            = "0.5.0"
+  version            = "0.6.1"
   attributes         = ["efs"]
   backup_resources   = [module.efs.arn]
   schedule           = var.efs_backup_schedule
