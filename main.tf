@@ -1,7 +1,7 @@
 # Elastic Beanstalk Application
 module "elastic_beanstalk_application" {
   source      = "cloudposse/elastic-beanstalk-application/aws"
-  version     = "0.9.0"
+  version     = "0.11.0"
   description = var.description
   attributes  = ["app"]
 
