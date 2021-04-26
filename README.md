@@ -1,3 +1,4 @@
+
 <!-- markdownlint-disable -->
 # terraform-aws-jenkins [![Latest Release](https://img.shields.io/github/release/cloudposse/terraform-aws-jenkins.svg)](https://github.com/cloudposse/terraform-aws-jenkins/releases/latest) [![Slack Community](https://slack.cloudposse.com/badge.svg)](https://slack.cloudposse.com)
 <!-- markdownlint-restore -->
@@ -57,7 +58,6 @@ __CodePipeline__ will:
 
 ![jenkins build server architecture](https://user-images.githubusercontent.com/52489/30888694-d07d68c8-a2d6-11e7-90b2-d8275ef94f39.png)
 
-
 ---
 
 This project is part of our comprehensive ["SweetOps"](https://cpco.io/sweetops) approach towards DevOps.
@@ -82,7 +82,6 @@ It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 
 
 We literally have [*hundreds of terraform modules*][terraform_modules] that are Open Source and well-maintained. Check them out!
-
 
 
 
@@ -252,7 +251,7 @@ Available targets:
 | <a name="module_cicd"></a> [cicd](#module\_cicd) | cloudposse/cicd/aws | 0.12.0 |
 | <a name="module_ecr"></a> [ecr](#module\_ecr) | cloudposse/ecr/aws | 0.32.2 |
 | <a name="module_efs"></a> [efs](#module\_efs) | cloudposse/efs/aws | 0.25.0 |
-| <a name="module_efs_backup"></a> [efs\_backup](#module\_efs\_backup) | cloudposse/backup/aws | 0.6.1 |
+| <a name="module_efs_backup"></a> [efs\_backup](#module\_efs\_backup) | cloudposse/backup/aws | 0.7.0 |
 | <a name="module_elastic_beanstalk_application"></a> [elastic\_beanstalk\_application](#module\_elastic\_beanstalk\_application) | cloudposse/elastic-beanstalk-application/aws | 0.11.0 |
 | <a name="module_elastic_beanstalk_environment"></a> [elastic\_beanstalk\_environment](#module\_elastic\_beanstalk\_environment) | cloudposse/elastic-beanstalk-environment/aws | 0.36.1 |
 | <a name="module_label_slaves"></a> [label\_slaves](#module\_label\_slaves) | cloudposse/label/null | 0.24.1 |
