@@ -1,6 +1,7 @@
 package test
 
 import (
+	"strings"
 	"testing"
 
  	"github.com/gruntwork-io/terratest/modules/random"
