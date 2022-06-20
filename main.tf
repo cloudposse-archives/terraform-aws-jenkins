@@ -77,7 +77,7 @@ module "efs" {
   region     = var.region
   vpc_id     = var.vpc_id
   subnets    = var.application_subnets
-  zone_id    = var.dns_zone_id
+  zone_id    = [var.dns_zone_id]
 
   # EC2 instances (from `elastic_beanstalk_environment`) are allowed to connect to the EFS
   security_groups = [module.elastic_beanstalk_environment.security_group_id]
