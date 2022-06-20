@@ -1,28 +1,28 @@
 provider "aws" {
-  region = "us-west-2"
+  region = "us-east-2"
 }
 
 variable "max_availability_zones" {
-  default = "2"
+  default = 2
 }
 
 data "aws_availability_zones" "available" {}
 
 module "jenkins" {
   source      = "../../"
-  namespace   = "cp"
+  namespace   = "eg"
+  stage       = "test"
   name        = "jenkins"
-  stage       = "prod"
   description = "Jenkins server as Docker container running on Elastic Beanstalk"
 
   master_instance_type         = "t2.medium"
   aws_account_id               = "000111222333"
-  aws_region                   = "us-west-2"
-  availability_zones           = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
+  region                       = "us-east-2"
+  availability_zones           = slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)
   vpc_id                       = "vpc-a22222ee"
-  zone_id                      = "ZXXXXXXXXXXX"
-  public_subnets               = "${module.subnets.public_subnet_ids}"
-  private_subnets              = "${module.subnets.private_subnet_ids}"
+  dns_zone_id                  = "ZXXXXXXXXXXX"
+  loadbalancer_subnets         = module.subnets.public_subnet_ids
+  application_subnets          = module.subnets.private_subnet_ids
   loadbalancer_certificate_arn = "XXXXXXXXXXXXXXXXX"
   ssh_key_pair                 = "ssh-key-jenkins"
 
@@ -30,13 +30,6 @@ module "jenkins" {
   github_organization = "cloudposse"
   github_repo_name    = "jenkins"
   github_branch       = "master"
-
-  datapipeline_config = {
-    instance_type = "t2.medium"
-    email         = "me@mycompany.com"
-    period        = "12 hours"
-    timeout       = "60 Minutes"
-  }
 
   env_vars = {
     JENKINS_USER          = "admin"
@@ -52,10 +45,10 @@ module "jenkins" {
 
 module "subnets" {
   source              = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
-  availability_zones  = ["${slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)}"]
-  namespace           = "cp"
+  availability_zones  = slice(data.aws_availability_zones.available.names, 0, var.max_availability_zones)
+  namespace           = "eg"
+  stage               = "test"
   name                = "jenkins"
-  stage               = "prod"
   region              = "us-west-2"
   vpc_id              = "vpc-a22222ee"
   igw_id              = "igw-s32321vd"
