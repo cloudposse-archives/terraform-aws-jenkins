@@ -51,6 +51,12 @@ variable "loadbalancer_certificate_arn" {
   default     = ""
 }
 
+variable "loadbalancer_ssl_policy" {
+  type        = "string"
+  default     = ""
+  description = "Specify a security policy to apply to the listener. This option is only applicable to environments with an application load balancer"
+}
+
 variable "loadbalancer_subnets" {
   type        = list(string)
   description = "List of subnets to place Elastic Load Balancer"
