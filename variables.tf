@@ -57,11 +57,6 @@ variable "loadbalancer_ssl_policy" {
   description = "Specify a security policy to apply to the listener. This option is only applicable to environments with an application load balancer"
 }
 
-variable "public_subnets" {
-  type        = "list"
-  description = "List of public subnets to place Elastic Load Balancer"
-}
-
 variable "loadbalancer_subnets" {
   type        = list(string)
   description = "List of subnets to place Elastic Load Balancer"
