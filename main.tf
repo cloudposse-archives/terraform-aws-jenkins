@@ -46,7 +46,7 @@ module "elastic_beanstalk_environment" {
   keypair                 = var.ssh_key_pair
   solution_stack_name     = var.solution_stack_name
   force_destroy           = var.loadbalancer_logs_bucket_force_destroy
-  loadbalancer_ssl_policy = "${var.loadbalancer_ssl_policy}"
+  loadbalancer_ssl_policy = var.loadbalancer_ssl_policy
 
   # Provide EFS DNS name to EB in the `EFS_HOST` ENV var. EC2 instance will mount to the EFS filesystem and use it to store Jenkins state
   # Add slaves Security Group `JENKINS_SLAVE_SECURITY_GROUPS` (comma-separated if more than one). Will be used by Jenkins to init the EC2 plugin to launch slaves inside the Security Group
