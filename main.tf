@@ -1,7 +1,7 @@
 # Elastic Beanstalk Application
 module "elastic_beanstalk_application" {
   source      = "cloudposse/elastic-beanstalk-application/aws"
-  version     = "0.11.0"
+  version     = "0.11.1"
   description = var.description
   attributes  = ["app"]
 
@@ -64,7 +64,7 @@ module "elastic_beanstalk_environment" {
 # Elastic Container Registry Docker Repository
 module "ecr" {
   source  = "cloudposse/ecr/aws"
-  version = "0.32.2"
+  version = "0.34.0"
 
   context = module.this.context
 }
@@ -128,7 +128,7 @@ module "cicd" {
 # Label for EC2 slaves
 module "label_slaves" {
   source     = "cloudposse/label/null"
-  version    = "0.24.1"
+  version    = "0.25.0"
   attributes = ["slaves"]
 
   context = module.this.context
