@@ -113,7 +113,6 @@
 | <a name="output_efs_backup_selection_id"></a> [efs\_backup\_selection\_id](#output\_efs\_backup\_selection\_id) | Backup Selection ID |
 | <a name="output_efs_backup_vault_arn"></a> [efs\_backup\_vault\_arn](#output\_efs\_backup\_vault\_arn) | Backup Vault ARN |
 | <a name="output_efs_backup_vault_id"></a> [efs\_backup\_vault\_id](#output\_efs\_backup\_vault\_id) | Backup Vault ID |
-| <a name="output_efs_backup_vault_recovery_points"></a> [efs\_backup\_vault\_recovery\_points](#output\_efs\_backup\_vault\_recovery\_points) | Backup Vault recovery points |
 | <a name="output_efs_dns_name"></a> [efs\_dns\_name](#output\_efs\_dns\_name) | EFS DNS name |
 | <a name="output_efs_host"></a> [efs\_host](#output\_efs\_host) | Route53 DNS hostname for the EFS |
 | <a name="output_efs_id"></a> [efs\_id](#output\_efs\_id) | EFS ID |
