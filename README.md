@@ -233,10 +233,6 @@ Available targets:
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 2.0 |
-| <a name="requirement_local"></a> [local](#requirement\_local) | >= 1.2 |
-| <a name="requirement_null"></a> [null](#requirement\_null) | >= 2.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | >= 2.0 |
-| <a name="requirement_template"></a> [template](#requirement\_template) | >= 2.0 |
 
 ## Providers
 
@@ -251,7 +247,7 @@ Available targets:
 | <a name="module_cicd"></a> [cicd](#module\_cicd) | cloudposse/cicd/aws | 0.12.0 |
 | <a name="module_ecr"></a> [ecr](#module\_ecr) | cloudposse/ecr/aws | 0.34.0 |
 | <a name="module_efs"></a> [efs](#module\_efs) | cloudposse/efs/aws | 0.25.0 |
-| <a name="module_efs_backup"></a> [efs\_backup](#module\_efs\_backup) | cloudposse/backup/aws | 0.6.1 |
+| <a name="module_efs_backup"></a> [efs\_backup](#module\_efs\_backup) | cloudposse/backup/aws | 0.13.1 |
 | <a name="module_elastic_beanstalk_application"></a> [elastic\_beanstalk\_application](#module\_elastic\_beanstalk\_application) | cloudposse/elastic-beanstalk-application/aws | 0.11.1 |
 | <a name="module_elastic_beanstalk_environment"></a> [elastic\_beanstalk\_environment](#module\_elastic\_beanstalk\_environment) | cloudposse/elastic-beanstalk-environment/aws | 0.36.1 |
 | <a name="module_label_slaves"></a> [label\_slaves](#module\_label\_slaves) | cloudposse/label/null | 0.25.0 |
@@ -345,7 +341,6 @@ Available targets:
 | <a name="output_efs_backup_selection_id"></a> [efs\_backup\_selection\_id](#output\_efs\_backup\_selection\_id) | Backup Selection ID |
 | <a name="output_efs_backup_vault_arn"></a> [efs\_backup\_vault\_arn](#output\_efs\_backup\_vault\_arn) | Backup Vault ARN |
 | <a name="output_efs_backup_vault_id"></a> [efs\_backup\_vault\_id](#output\_efs\_backup\_vault\_id) | Backup Vault ID |
-| <a name="output_efs_backup_vault_recovery_points"></a> [efs\_backup\_vault\_recovery\_points](#output\_efs\_backup\_vault\_recovery\_points) | Backup Vault recovery points |
 | <a name="output_efs_dns_name"></a> [efs\_dns\_name](#output\_efs\_dns\_name) | EFS DNS name |
 | <a name="output_efs_host"></a> [efs\_host](#output\_efs\_host) | Route53 DNS hostname for the EFS |
 | <a name="output_efs_id"></a> [efs\_id](#output\_efs\_id) | EFS ID |

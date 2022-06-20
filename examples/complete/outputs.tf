@@ -208,11 +208,6 @@ output "efs_backup_vault_arn" {
   description = "Backup Vault ARN"
 }
 
-output "efs_backup_vault_recovery_points" {
-  value       = module.jenkins.efs_backup_vault_recovery_points
-  description = "Backup Vault recovery points"
-}
-
 output "efs_backup_plan_arn" {
   value       = module.jenkins.efs_backup_plan_arn
   description = "Backup Plan ARN"
