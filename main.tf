@@ -205,6 +205,7 @@ resource "aws_iam_policy" "slaves" {
   path        = "/"
   description = "Policy for EC2 instance profile to allow launching Jenkins slaves"
   policy      = data.aws_iam_policy_document.slaves.json
+  tags        = module.label_slaves.tags
 }
 
 # Attach Policy to the EC2 instance profile to allow Jenkins master to launch and control slave EC2 instances
