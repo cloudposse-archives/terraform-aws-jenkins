@@ -52,7 +52,7 @@ variable "loadbalancer_certificate_arn" {
 }
 
 variable "loadbalancer_ssl_policy" {
-  type        = "string"
+  type        = string
   default     = ""
   description = "Specify a security policy to apply to the listener. This option is only applicable to environments with an application load balancer"
 }
