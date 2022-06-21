@@ -147,7 +147,7 @@ resource "aws_security_group" "slaves" {
     from_port       = 0
     to_port         = 0
     protocol        = -1
-    security_groups = var.allowed_security_groups
+    security_groups = var.associated_security_group_ids
   }
 
   # Allow Jenkins master instance to communicate with Jenkins slave instances on SSH port 22
