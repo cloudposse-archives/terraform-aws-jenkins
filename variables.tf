@@ -72,7 +72,7 @@ variable "dns_zone_id" {
   description = "Route53 parent zone ID. The module will create sub-domain DNS records in the parent zone for the EB environment and EFS"
 }
 
-variable "allowed_security_groups" {
+variable "associated_security_group_ids" {
   type        = list(string)
   default     = []
   description = "List of security groups to be allowed to connect to Jenkins master EC2 instances"
