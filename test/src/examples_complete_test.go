@@ -90,7 +90,7 @@ func TestExamplesComplete(t *testing.T) {
 	// Run `terraform output` to get the value of an output variable
 	codebuildProjectName := terraform.Output(t, terraformOptions, "codebuild_project_name")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-jenkins-build-"+randID+"-cicd", codebuildProjectName)
+	assert.Equal(t, "eg-test-jenkins-"+randID+"-build-cicd", codebuildProjectName)
 
 	// Run `terraform output` to get the value of an output variable
 	codebuildCacheBucketName := terraform.Output(t, terraformOptions, "codebuild_cache_bucket_name")
