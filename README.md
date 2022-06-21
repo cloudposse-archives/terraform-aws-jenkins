@@ -249,7 +249,7 @@ Available targets:
 | <a name="module_efs"></a> [efs](#module\_efs) | cloudposse/efs/aws | 0.32.7 |
 | <a name="module_efs_backup"></a> [efs\_backup](#module\_efs\_backup) | cloudposse/backup/aws | 0.13.1 |
 | <a name="module_elastic_beanstalk_application"></a> [elastic\_beanstalk\_application](#module\_elastic\_beanstalk\_application) | cloudposse/elastic-beanstalk-application/aws | 0.11.1 |
-| <a name="module_elastic_beanstalk_environment"></a> [elastic\_beanstalk\_environment](#module\_elastic\_beanstalk\_environment) | cloudposse/elastic-beanstalk-environment/aws | 0.36.1 |
+| <a name="module_elastic_beanstalk_environment"></a> [elastic\_beanstalk\_environment](#module\_elastic\_beanstalk\_environment) | cloudposse/elastic-beanstalk-environment/aws | 0.46.0 |
 | <a name="module_label_slaves"></a> [label\_slaves](#module\_label\_slaves) | cloudposse/label/null | 0.25.0 |
 | <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
 
@@ -267,8 +267,8 @@ Available targets:
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_tag_map"></a> [additional\_tag\_map](#input\_additional\_tag\_map) | Additional key-value pairs to add to each map in `tags_as_list_of_maps`. Not added to `tags` or `id`.<br>This is for some rare cases where resources want additional configuration of tags<br>and therefore take a list of maps with tag key, value, and additional configuration. | `map(string)` | `{}` | no |
-| <a name="input_allowed_security_groups"></a> [allowed\_security\_groups](#input\_allowed\_security\_groups) | List of security groups to be allowed to connect to Jenkins master EC2 instances | `list(string)` | `[]` | no |
 | <a name="input_application_subnets"></a> [application\_subnets](#input\_application\_subnets) | List of subnets to place EC2 instances and EFS | `list(string)` | n/a | yes |
+| <a name="input_associated_security_group_ids"></a> [associated\_security\_group\_ids](#input\_associated\_security\_group\_ids) | List of security groups to be allowed to connect to Jenkins master EC2 instances | `list(string)` | `[]` | no |
 | <a name="input_attributes"></a> [attributes](#input\_attributes) | ID element. Additional attributes (e.g. `workers` or `cluster`) to add to `id`,<br>in the order they appear in the list. New attributes are appended to the<br>end of the list. The elements of the list are joined by the `delimiter`<br>and treated as a single ID element. | `list(string)` | `[]` | no |
 | <a name="input_availability_zone_selector"></a> [availability\_zone\_selector](#input\_availability\_zone\_selector) | Availability Zone selector | `string` | `"Any"` | no |
 | <a name="input_availability_zones"></a> [availability\_zones](#input\_availability\_zones) | List of Availability Zones for EFS | `list(string)` | n/a | yes |
@@ -520,8 +520,8 @@ Check out [our other projects][github], [follow us on twitter][twitter], [apply 
 ### Contributors
 
 <!-- markdownlint-disable -->
-|  [![Erik Osterman][osterman_avatar]][osterman_homepage]<br/>[Erik Osterman][osterman_homepage] | [![Andriy Knysh][aknysh_avatar]][aknysh_homepage]<br/>[Andriy Knysh][aknysh_homepage] | [![Igor Rodionov][goruha_avatar]][goruha_homepage]<br/>[Igor Rodionov][goruha_homepage] | [![Ivan Pinatti][ivan-pinatti_avatar]][ivan-pinatti_homepage]<br/>[Ivan Pinatti][ivan-pinatti_homepage] | [![Sergey Vasilyev][s2504s_avatar]][s2504s_homepage]<br/>[Sergey Vasilyev][s2504s_homepage] |
-|---|---|---|---|---|
+|  [![Erik Osterman][osterman_avatar]][osterman_homepage]<br/>[Erik Osterman][osterman_homepage] | [![Andriy Knysh][aknysh_avatar]][aknysh_homepage]<br/>[Andriy Knysh][aknysh_homepage] | [![Igor Rodionov][goruha_avatar]][goruha_homepage]<br/>[Igor Rodionov][goruha_homepage] | [![Ivan Pinatti][ivan-pinatti_avatar]][ivan-pinatti_homepage]<br/>[Ivan Pinatti][ivan-pinatti_homepage] | [![Sergey Vasilyev][s2504s_avatar]][s2504s_homepage]<br/>[Sergey Vasilyev][s2504s_homepage] | [![RB][nitrocode_avatar]][nitrocode_homepage]<br/>[RB][nitrocode_homepage] |
+|---|---|---|---|---|---|
 <!-- markdownlint-restore -->
 
 
@@ -539,6 +539,9 @@ Check out [our other projects][github], [follow us on twitter][twitter], [apply 
 
   [s2504s_homepage]: https://github.com/s2504s/
   [s2504s_avatar]: https://img.cloudposse.com/150x150/https://github.com/s2504s.png
+
+  [nitrocode_homepage]: https://github.com/nitrocode/
+  [nitrocode_avatar]: https://img.cloudposse.com/150x150/https://github.com/nitrocode.png
 
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]

@@ -11,7 +11,7 @@ module "elastic_beanstalk_application" {
 # Elastic Beanstalk Environment
 module "elastic_beanstalk_environment" {
   source     = "cloudposse/elastic-beanstalk-environment/aws"
-  version    = "0.36.1"
+  version    = "0.46.0"
   attributes = ["env"]
 
   region                             = var.region
@@ -42,11 +42,12 @@ module "elastic_beanstalk_environment" {
   vpc_id                  = var.vpc_id
   loadbalancer_subnets    = var.loadbalancer_subnets
   application_subnets     = var.application_subnets
-  allowed_security_groups = var.allowed_security_groups
   keypair                 = var.ssh_key_pair
   solution_stack_name     = var.solution_stack_name
   force_destroy           = var.loadbalancer_logs_bucket_force_destroy
   loadbalancer_ssl_policy = var.loadbalancer_ssl_policy
+
+  associated_security_group_ids = var.associated_security_group_ids
 
   # Provide EFS DNS name to EB in the `EFS_HOST` ENV var. EC2 instance will mount to the EFS filesystem and use it to store Jenkins state
   # Add slaves Security Group `JENKINS_SLAVE_SECURITY_GROUPS` (comma-separated if more than one). Will be used by Jenkins to init the EC2 plugin to launch slaves inside the Security Group
@@ -146,7 +147,7 @@ resource "aws_security_group" "slaves" {
     from_port       = 0
     to_port         = 0
     protocol        = -1
-    security_groups = var.allowed_security_groups
+    security_groups = var.associated_security_group_ids
   }
 
   # Allow Jenkins master instance to communicate with Jenkins slave instances on SSH port 22
