@@ -1,7 +1,10 @@
 package test
 
 import (
+	"strings"
 	"testing"
+
+ 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 )
@@ -9,13 +12,19 @@ import (
 // Test the Terraform module in examples/complete using Terratest.
 func TestExamplesComplete(t *testing.T) {
 	t.Parallel()
+	randID := strings.ToLower(random.UniqueId())
+	attributes := []string{randID}
+	varFiles := []string{"fixtures.us-east-2.tfvars"}
 
 	terraformOptions := &terraform.Options{
 		// The path to where our Terraform code is located
 		TerraformDir: "../../examples/complete",
 		Upgrade:      true,
 		// Variables to pass to our Terraform code using -var-file options
-		VarFiles: []string{"fixtures.us-east-2.tfvars"},
+		VarFiles:     varFiles,
+		Vars: map[string]interface{}{
+			"attributes": attributes,
+		},
 	}
 
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
@@ -61,12 +70,12 @@ func TestExamplesComplete(t *testing.T) {
 	// Run `terraform output` to get the value of an output variable
 	elasticBeanstalkApplicationName := terraform.Output(t, terraformOptions, "elastic_beanstalk_application_name")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-jenkins-app", elasticBeanstalkApplicationName)
+	assert.Equal(t, "eg-test-jenkins-"+randID+"-app", elasticBeanstalkApplicationName)
 
 	// Run `terraform output` to get the value of an output variable
 	elasticBeanstalkEnvironmentName := terraform.Output(t, terraformOptions, "elastic_beanstalk_environment_name")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-jenkins-env", elasticBeanstalkEnvironmentName)
+	assert.Equal(t, "eg-test-jenkins-"+randID+"-env", elasticBeanstalkEnvironmentName)
 
 	// Run `terraform output` to get the value of an output variable
 	elasticBeanstalkEnvironmentHostname := terraform.Output(t, terraformOptions, "elastic_beanstalk_environment_hostname")
@@ -76,22 +85,22 @@ func TestExamplesComplete(t *testing.T) {
 	// Run `terraform output` to get the value of an output variable
 	ecrRepositoryName := terraform.Output(t, terraformOptions, "ecr_repository_name")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-jenkins", ecrRepositoryName)
+	assert.Equal(t, "eg-test-jenkins-"+randID, ecrRepositoryName)
 
 	// Run `terraform output` to get the value of an output variable
 	codebuildProjectName := terraform.Output(t, terraformOptions, "codebuild_project_name")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-jenkins-build-cicd", codebuildProjectName)
+	assert.Equal(t, "eg-test-jenkins-build-"+randID+"-cicd", codebuildProjectName)
 
 	// Run `terraform output` to get the value of an output variable
 	codebuildCacheBucketName := terraform.Output(t, terraformOptions, "codebuild_cache_bucket_name")
 	// Verify we're getting back the outputs we expect
-	assert.Contains(t, codebuildCacheBucketName, "eg-test-jenkins-build-cicd")
+	assert.Contains(t, codebuildCacheBucketName, "eg-test-jenkins-build-"+randID+"-cicd")
 
 	// Run `terraform output` to get the value of an output variable
 	codepipelineId := terraform.Output(t, terraformOptions, "codepipeline_id")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-jenkins-cicd", codepipelineId)
+	assert.Equal(t, "eg-test-jenkins-"+randID+"-cicd", codepipelineId)
 
 	// Run `terraform output` to get the value of an output variable
 	efsArn := terraform.Output(t, terraformOptions, "efs_arn")
@@ -106,10 +115,10 @@ func TestExamplesComplete(t *testing.T) {
 	// Run `terraform output` to get the value of an output variable
 	efsBackupVaultArn := terraform.Output(t, terraformOptions, "efs_backup_vault_arn")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "arn:aws:backup:us-east-2:126450723953:backup-vault:eg-test-jenkins-efs", efsBackupVaultArn)
+	assert.Equal(t, "arn:aws:backup:us-east-2:126450723953:backup-vault:eg-test-jenkins-"+randID+"-efs", efsBackupVaultArn)
 
 	// Run `terraform output` to get the value of an output variable
 	efsBackupVaultId := terraform.Output(t, terraformOptions, "efs_backup_vault_id")
 	// Verify we're getting back the outputs we expect
-	assert.Equal(t, "eg-test-jenkins-efs", efsBackupVaultId)
+	assert.Equal(t, "eg-test-jenkins-"+randID+"-efs", efsBackupVaultId)
 }

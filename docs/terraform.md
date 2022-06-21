@@ -3,7 +3,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 2.0 |
 
 ## Providers
@@ -18,7 +18,7 @@
 |------|--------|---------|
 | <a name="module_cicd"></a> [cicd](#module\_cicd) | cloudposse/cicd/aws | 0.12.0 |
 | <a name="module_ecr"></a> [ecr](#module\_ecr) | cloudposse/ecr/aws | 0.34.0 |
-| <a name="module_efs"></a> [efs](#module\_efs) | cloudposse/efs/aws | 0.25.0 |
+| <a name="module_efs"></a> [efs](#module\_efs) | cloudposse/efs/aws | 0.32.7 |
 | <a name="module_efs_backup"></a> [efs\_backup](#module\_efs\_backup) | cloudposse/backup/aws | 0.13.1 |
 | <a name="module_elastic_beanstalk_application"></a> [elastic\_beanstalk\_application](#module\_elastic\_beanstalk\_application) | cloudposse/elastic-beanstalk-application/aws | 0.11.1 |
 | <a name="module_elastic_beanstalk_environment"></a> [elastic\_beanstalk\_environment](#module\_elastic\_beanstalk\_environment) | cloudposse/elastic-beanstalk-environment/aws | 0.36.1 |
