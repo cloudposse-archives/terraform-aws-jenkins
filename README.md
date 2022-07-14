@@ -244,7 +244,7 @@ Available targets:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cicd"></a> [cicd](#module\_cicd) | cloudposse/cicd/aws | 0.19.4 |
+| <a name="module_cicd"></a> [cicd](#module\_cicd) | cloudposse/cicd/aws | 0.19.5 |
 | <a name="module_ecr"></a> [ecr](#module\_ecr) | cloudposse/ecr/aws | 0.34.0 |
 | <a name="module_efs"></a> [efs](#module\_efs) | cloudposse/efs/aws | 0.32.7 |
 | <a name="module_efs_backup"></a> [efs\_backup](#module\_efs\_backup) | cloudposse/backup/aws | 0.14.0 |
