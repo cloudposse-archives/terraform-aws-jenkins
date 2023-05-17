@@ -105,7 +105,7 @@ module "efs_backup" {
 # CodePipeline/CodeBuild to build Jenkins Docker image, store it to a ECR repo, and deploy it to Elastic Beanstalk running Docker stack
 module "cicd" {
   source                             = "cloudposse/cicd/aws"
-  version                            = "0.19.5"
+  version                            = "0.20.0"
   attributes                         = ["cicd"]
   elastic_beanstalk_application_name = module.elastic_beanstalk_application.elastic_beanstalk_application_name
   elastic_beanstalk_environment_name = module.elastic_beanstalk_environment.name
