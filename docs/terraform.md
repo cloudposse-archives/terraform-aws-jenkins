@@ -18,7 +18,7 @@
 |------|--------|---------|
 | <a name="module_cicd"></a> [cicd](#module\_cicd) | cloudposse/cicd/aws | 0.19.5 |
 | <a name="module_ecr"></a> [ecr](#module\_ecr) | cloudposse/ecr/aws | 0.34.0 |
-| <a name="module_efs"></a> [efs](#module\_efs) | cloudposse/efs/aws | 0.32.7 |
+| <a name="module_efs"></a> [efs](#module\_efs) | cloudposse/efs/aws | 0.34.0 |
 | <a name="module_efs_backup"></a> [efs\_backup](#module\_efs\_backup) | cloudposse/backup/aws | 0.14.0 |
 | <a name="module_elastic_beanstalk_application"></a> [elastic\_beanstalk\_application](#module\_elastic\_beanstalk\_application) | cloudposse/elastic-beanstalk-application/aws | 0.11.1 |
 | <a name="module_elastic_beanstalk_environment"></a> [elastic\_beanstalk\_environment](#module\_elastic\_beanstalk\_environment) | cloudposse/elastic-beanstalk-environment/aws | 0.46.0 |
