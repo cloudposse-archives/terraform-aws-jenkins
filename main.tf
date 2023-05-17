@@ -74,7 +74,7 @@ module "ecr" {
 # EFS to store Jenkins state (settings, jobs, etc.)
 module "efs" {
   source     = "cloudposse/efs/aws"
-  version    = "0.32.7"
+  version    = "0.34.0"
   attributes = ["efs"]
   region     = var.region
   vpc_id     = var.vpc_id
