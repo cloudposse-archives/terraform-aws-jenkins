@@ -66,7 +66,7 @@ module "elastic_beanstalk_environment" {
 # Elastic Container Registry Docker Repository
 module "ecr" {
   source  = "cloudposse/ecr/aws"
-  version = "0.34.0"
+  version = "0.36.0"
 
   context = module.this.context
 }
